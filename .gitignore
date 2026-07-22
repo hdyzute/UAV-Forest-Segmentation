@@ -32,3 +32,7 @@ Thumbs.db
 *.swo
 .vscode/
 .idea/
+
+# Internal thesis and edit checklist files (not pushed to public GitHub)
+UAV/
+danh_sach_loi_can_sua.md
