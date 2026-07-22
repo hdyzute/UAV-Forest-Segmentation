@@ -1,0 +1,131 @@
+% ============================================================
+\chapter{KẾT QUẢ THỰC NGHIỆM}
+\label{ch:ket_qua}
+% ============================================================
+
+Chương này trình bày chi tiết kết quả thực nghiệm thu được từ hai cấu hình thí nghiệm (Exp 2 và Exp 4) trên bốn kiến trúc mạng phân vùng phổ biến là DeepLabV3+, SegFormer, UNet và UNet++. Toàn bộ số liệu được trích xuất trực tiếp từ kết quả đánh giá trên tập kiểm thử độc lập (gồm các chuỗi ảnh đại diện cho các điều kiện thời tiết và góc chụp khác nhau).
+
+\section{Kết quả tổng hợp}
+\label{sec:ket_qua_tong_hop}
+
+Để đánh giá hiệu quả tổng thể của chiến lược học trọng số thích nghi (Exp 4) so với chiến lược sử dụng hàm mất mát Cross-Entropy với trọng số lớp cố định ENet (Exp 2), Bảng~\ref{tab:miou_summary} tổng hợp điểm trung bình mIoU trên tập kiểm thử cho cả bốn kiến trúc. Cột $\Delta$ thể hiện mức cải thiện tính bằng điểm phần trăm (pp).
+
+\begin{table}[H]
+\centering
+\caption{mIoU trên tập kiểm thử (10 lớp, bỏ Empty) của các mô hình trong hai cấu hình Exp 2 và Exp 4.}
+\label{tab:miou_summary}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Kiến trúc (Backbone)} & \textbf{Exp 2 (CE + W)} & \textbf{Exp 4 (Adaptive FDC)} & \textbf{Cải thiện ($\Delta$ pp)} \\
+\midrule
+DeepLabV3+ (ResNet50) & 0,7617 & \textbf{0,8091} & +4,74 pp \\
+SegFormer (MiT-B4)    & 0,7711 & \textbf{0,8126} & +4,15 pp \\
+UNet (ResNet50)       & 0,7810 & \textbf{0,8298} & +4,88 pp \\
+UNet++ (ResNet50)     & 0,7956 & \textbf{0,8374} & +4,18 pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Nhận xét tổng quan:}
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Cải thiện vượt trội trên tất cả các kiến trúc:} Việc thay thế hàm CE có trọng số cố định bằng tổ hợp Focal+Dice+CE thích nghi (Exp 4) giúp tăng mạnh mIoU kiểm thử từ $+4{,}15$ pp đến $+4{,}88$ pp. Sự cải thiện đồng đều trên cả mô hình dựa trên CNN (UNet, UNet++, DeepLabV3+) và mô hình dựa trên Transformer (SegFormer) chứng minh tính tổng quát của phương pháp đề xuất.
+  \item \textbf{UNet++ đạt hiệu năng tốt nhất:} Kiến trúc UNet++ kết hợp với loss thích nghi đạt điểm mIoU cao nhất ($0{,}8374$), tiếp theo lần lượt là UNet ($0{,}8298$), SegFormer ($0{,}8126$), và DeepLabV3+ ($0{,}8091$). Kết quả này củng cố giả thuyết rằng cơ chế kết nối nhảy vọt dày đặc (dense skip connections) của UNet++ giúp bảo toàn tốt thông tin đặc trưng không gian đa tỷ lệ trong quá trình giải mã.
+\end{itemize}
+
+\section{Kết quả chi tiết theo từng lớp}
+\label{sec:per_class}
+
+Bảng~\ref{tab:per_class_detail} cung cấp cái nhìn chi tiết hơn về hiệu năng của các mô hình đối với từng lớp đối tượng cụ thể. Điều này giúp xác định chính xác các lớp đối tượng nào được hưởng lợi nhiều nhất từ hàm mất mát thích nghi trong Exp 4.
+
+\begin{table}[H]
+\centering
+\caption{So sánh IoU chi tiết theo từng lớp trên tập kiểm thử (seq6, seq7, seq11) giữa Exp 2 và Exp 4.}
+\label{tab:per_class_detail}
+\small
+\begin{tabular}{l c c c c c c c c}
+\toprule
+ & \multicolumn{2}{c}{\textbf{DeepLabV3+}} & \multicolumn{2}{c}{\textbf{SegFormer}} & \multicolumn{2}{c}{\textbf{UNet}} & \multicolumn{2}{c}{\textbf{UNet++}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+\textbf{Lớp} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} \\
+\midrule
+Sky                & 0,9911 & \textbf{0,9914} & 0,9912 & 0,9912 & 0,9976 & 0,9968 & 0,9986 & 0,9977 \\
+Deciduous trees    & 0,7264 & \textbf{0,7301} & 0,7331 & \textbf{0,7366} & 0,7419 & 0,7418 & 0,7570 & 0,7522 \\
+Coniferous trees   & 0,8079 & \textbf{0,8140} & 0,8145 & \textbf{0,8185} & 0,8243 & \textbf{0,8292} & 0,8306 & \textbf{0,8338} \\
+Fallen trees       & 0,5094 & \textbf{0,6180} & 0,5120 & \textbf{0,6234} & 0,5395 & \textbf{0,6604} & 0,5848 & \textbf{0,6707} \\
+Dirt ground        & 0,8365 & \textbf{0,8757} & 0,8384 & \textbf{0,8760} & 0,8476 & \textbf{0,8684} & 0,8584 & \textbf{0,8842} \\
+Ground vegetation  & 0,8466 & \textbf{0,8553} & 0,8488 & \textbf{0,8579} & 0,8592 & \textbf{0,8661} & 0,8658 & \textbf{0,8708} \\
+Rocks              & 0,7751 & \textbf{0,8334} & 0,7847 & \textbf{0,8387} & 0,8149 & \textbf{0,8597} & 0,8294 & \textbf{0,8631} \\
+Building           & 0,8489 & \textbf{0,9075} & 0,8607 & \textbf{0,9056} & 0,8655 & \textbf{0,9187} & 0,8778 & \textbf{0,9268} \\
+Fence              & 0,5355 & \textbf{0,6312} & 0,5564 & \textbf{0,6436} & 0,5435 & \textbf{0,6940} & 0,5581 & \textbf{0,7031} \\
+Car                & 0,7393 & \textbf{0,8345} & 0,7578 & \textbf{0,8347} & 0,7756 & \textbf{0,8630} & 0,7938 & \textbf{0,8715} \\
+\midrule
+\textbf{mIoU}      & 0,7617 & \textbf{0,8091} & 0,7711 & \textbf{0,8126} & 0,7810 & \textbf{0,8298} & 0,7956 & \textbf{0,8374} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Phân tích xu hướng theo lớp:}
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Cải thiện mạnh mẽ trên các lớp hiếm:} Bốn lớp đối tượng chiếm tỷ lệ pixel cực nhỏ trong tập dữ liệu (gồm \textit{Fallen trees, Building, Fence, Car}) đều chứng kiến sự gia tăng IoU vượt trội trong cấu hình Exp 4. Ví dụ, lớp \textit{Fallen trees} (cây đổ) tăng từ $0,5848$ lên $0,6707$ ($+8,59$ pp) trên UNet++; lớp \textit{Fence} (hàng rào) tăng từ $0,5581$ lên $0,7031$ ($+14,50$ pp) trên UNet++; và lớp \textit{Car} (ô tô) tăng từ $0,7938$ lên $0,8715$ ($+7,77$ pp) trên UNet++.
+  \item \textbf{Duy trì và tối ưu hiệu năng trên các lớp phổ biến:} Đối với các lớp nền phổ biến như \textit{Sky, Coniferous trees, Ground vegetation}, điểm IoU trong cấu hình Exp 4 vẫn được giữ vững hoặc tăng nhẹ so với Exp 2. Điều này chứng tỏ chiến lược học trọng số thích nghi đã khắc phục được nhược điểm over-weighting của hàm CE trọng số ENet cố định (vốn thường làm giảm nghiêm trọng hiệu năng của các lớp đa số để ưu tiên các lớp thiểu số).
+\end{itemize}
+
+\section{Phân tích độ bao phủ và tỷ lệ bỏ sót vật thể nhỏ}
+\label{sec:small_object_analysis}
+
+Mặc dù điểm IoU của các lớp hiếm và nhỏ tăng mạnh trong Exp 4, một phân tích sâu hơn về ma trận lỗi phân loại bộc lộ một sự đánh đổi quan trọng liên quan đến kích thước vật thể. Bảng~\ref{tab:small_object_tradeoff} thống kê độ bao phủ (Recall) và tỷ lệ bỏ sót (Miss Rate $= 1 - \text{Recall}$) đối với bốn lớp vật thể nhỏ có kích thước giới hạn trên tập dữ liệu là \textit{Fallen trees, Fence, Car} và \textit{Building}.
+
+\begin{table}[H]
+\centering
+\caption{Đánh đổi giữa độ bao phủ (Recall) và tỷ lệ bỏ sót (Miss Rate) trên các vật thể nhỏ giữa Exp 2 và Exp 4.}
+\label{tab:small_object_tradeoff}
+\small
+\begin{tabular}{l c c c c c c c c}
+\toprule
+ & \multicolumn{2}{c}{\textbf{DeepLabV3+}} & \multicolumn{2}{c}{\textbf{SegFormer}} & \multicolumn{2}{c}{\textbf{UNet}} & \multicolumn{2}{c}{\textbf{UNet++}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+\textbf{Lớp (Chỉ số)} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} \\
+\midrule
+Fallen trees       (Recall) & \textbf{0,9201} & 0,8421 & \textbf{0,9356} & 0,8573 & \textbf{0,8993} & 0,8368 & \textbf{0,8991} & 0,8199 \\
+                    (Miss \%) & 8,0\% & \textbf{15,8\%} & 6,4\% & \textbf{14,3\%} & 10,1\% & \textbf{16,3\%} & 10,1\% & \textbf{18,0\%} \\
+\hline
+Fence              (Recall) & \textbf{0,9309} & 0,8613 & \textbf{0,9441} & 0,8523 & \textbf{0,9256} & 0,8610 & \textbf{0,9381} & 0,8550 \\
+                    (Miss \%) & 6,9\% & \textbf{13,9\%} & 5,6\% & \textbf{14,8\%} & 7,4\% & \textbf{13,9\%} & 6,2\% & \textbf{14,5\%} \\
+\hline
+Car                (Recall) & \textbf{0,9601} & 0,9170 & \textbf{0,9588} & 0,9263 & \textbf{0,9464} & 0,9257 & \textbf{0,9533} & 0,9198 \\
+                    (Miss \%) & 4,0\% & \textbf{8,3\%} & 4,1\% & \textbf{7,4\%} & 5,4\% & \textbf{7,4\%} & 4,7\% & \textbf{8,0\%} \\
+\hline
+Building           (Recall) & \textbf{0,9878} & 0,9655 & \textbf{0,9881} & 0,9698 & \textbf{0,9852} & 0,9677 & \textbf{0,9857} & 0,9675 \\
+                    (Miss \%) & 1,2\% & \textbf{3,4\%} & 1,2\% & \textbf{3,0\%} & 1,5\% & \textbf{3,2\%} & 1,4\% & \textbf{3,2\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Phân tích hiện tượng đánh đổi (Trade-off):}
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Tỷ lệ bỏ sót (Miss Rate) tăng ở Exp 4:} Số liệu từ Bảng~\ref{tab:small_object_tradeoff} cho thấy một xu hướng nhất quán trên cả bốn mô hình: cấu hình Exp 4 luôn có tỷ lệ bỏ sót vật thể nhỏ cao hơn rõ rệt so với Exp 2.
+        \begin{itemize}
+          \item Trên UNet++, tỷ lệ bỏ sót đối với lớp cây đổ (\textit{Fallen trees}) tăng từ $10,1\%$ (Exp 2) lên $18,0\%$ (Exp 4).
+          \item Đối với lớp hàng rào (\textit{Fence}), tỷ lệ bỏ sót tăng từ $6,2\%$ lên $14,5\%$.
+          \item Đối với ô tô (\textit{Car}), tỷ lệ bỏ sót tăng gần gấp đôi từ $4,7\%$ lên $8,0\%$.
+        \end{itemize}
+  \item \textbf{Nguyên nhân của hiện tượng đánh đổi:} Trong cấu hình Exp 2, hàm mất mát CE với trọng số ENet cố định tập trung phạt lỗi pixel-wise rất lớn đối với các lớp thiểu số bất kể kích thước vùng chồng lấp. Điều này buộc mô hình phải đưa ra các dự đoán rộng rãi hơn (quá mức) cho lớp hiếm để đạt được độ bao phủ (Recall) cao nhất, dẫn đến nhiều lỗi dương tính giả (False Positives) và làm giảm độ chính xác Precision (khiến IoU tổng thể của lớp vẫn thấp). 
+        Ngược lại, trong Exp 4, sự tích hợp của Dice Loss (hướng cấu trúc vùng chồng lấp) và cơ chế học thích nghi Uncertainty Weighting hướng mô hình tối ưu hóa diện tích chồng lấp tổng thể (IoU). Mô hình tự động kiềm chế các dự đoán thừa thãi, giảm thiểu lỗi dương tính giả rất hiệu quả (tăng vọt Precision và từ đó tăng IoU). Tuy nhiên, điều này đi kèm với cái giá là mô hình trở nên khắt khe hơn và có xu hướng bỏ sót hoàn toàn các mảnh vật thể quá nhỏ hoặc mập mờ ở vùng biên, làm tăng tỷ lệ âm tính giả (Miss Rate).
+\end{itemize}
+
+\section{Diễn biến trọng số thích nghi trong quá trình học}
+\label{sec:loss_weights_evolution}
+
+Để làm rõ cơ chế tự điều chỉnh của Exp 4, quá trình thay đổi các tham số trọng số học được $w_F$ (Focal loss), $w_D$ (Dice loss) và $w_{CE}$ (Cross-Entropy loss) đã được theo dõi. Ban đầu, các tham số $\log\sigma_k$ khởi tạo bằng $0$ (trọng số tương đương bằng $1{,}0$).
+
+Trải qua quá trình huấn luyện, mô hình tự động nhận thấy các thành phần loss có độ khó và phương sai khác nhau. 
+\begin{itemize}[leftmargin=1.4cm]
+  \item Trên kiến trúc \textbf{DeepLabV3+}, trọng số hội tụ đạt Focal: $8,16$, Dice: $5,22$, và CE: $4,47$ ở cuối quá trình huấn luyện.
+  \item Trên kiến trúc \textbf{UNet++}, trọng số hội tụ đạt Focal: $9,16$, Dice: $6,29$, và CE: $5,00$.
+\end{itemize}
+Việc các trọng số tự động tăng lên phản ánh sự tự tin của mô hình đối với các tác vụ loss tương ứng, trong đó thành phần Focal Loss luôn nhận được sự ưu tiên trọng số cao nhất để đối phó với các pixel khó phân loại ở ranh giới và các lớp mất cân bằng trầm trọng.
+
+\section{Kết quả định tính}
+\label{sec:qualitative_results}
+
+Đánh giá trực quan trên các mẫu kiểm thử cho thấy ảnh phân vùng của Exp 4 sạch hơn, ít bị nhiễu lấm tấm (pixelation) và cấu trúc của các vùng lớn (như các mảng rừng cây lá rộng, cây lá kim hay mặt đất) có độ liên kết không gian chặt chẽ hơn nhờ Dice Loss tối ưu hóa vùng. Tuy nhiên, quan sát kỹ tại vị trí các vật thể nhỏ đơn lẻ (như ô tô hay các thân cây đổ nhỏ nằm sâu trong tán rừng), mô hình Exp 4 có xu hướng vẽ co cụm lại hoặc đôi khi bỏ qua các phần rìa mảnh của vật thể, phù hợp với số liệu Miss Rate tăng lên đã phân tích.

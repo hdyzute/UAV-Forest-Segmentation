@@ -1,0 +1,49 @@
+% ====================== BÌA CHÍNH ======================
+% Khung viền xanh + logo, theo mẫu báo cáo của Khoa Toán - Tin học.
+% TODO: kiểm tra lại tên SV/MSSV/GVHD/tháng nếu cần.
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+% --- Khung viền kép màu xanh quanh trang ---
+\begin{tikzpicture}[remember picture, overlay]
+  \draw[line width=2.2pt, blue!65!black]
+    ($(current page.north west)+(1.5cm,-1.5cm)$)
+    rectangle ($(current page.south east)+(-1.5cm,1.5cm)$);
+  \draw[line width=0.9pt, blue!65!black]
+    ($(current page.north west)+(1.75cm,-1.75cm)$)
+    rectangle ($(current page.south east)+(-1.75cm,1.75cm)$);
+\end{tikzpicture}
+
+\vspace*{0.6cm}
+{\fontsize{14}{18}\selectfont\bfseries ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH\par}
+\vspace{4pt}
+{\fontsize{14}{18}\selectfont\bfseries TRƯỜNG ĐẠI HỌC KHOA HỌC TỰ NHIÊN\par}
+\vspace{4pt}
+{\fontsize{13}{16}\selectfont\bfseries KHOA TOÁN - TIN HỌC\par}
+
+\vspace{1.0cm}
+\includegraphics[width=4.8cm]{figures/logo.png}
+
+\vspace{1.0cm}
+{\fontsize{18}{22}\selectfont\bfseries BÁO CÁO TIẾN ĐỘ\par}
+
+\vspace{0.8cm}
+{\fontsize{17}{24}\selectfont\bfseries
+PHÂN ĐOẠN NGỮ NGHĨA ẢNH UAV RỪNG\\[4pt]
+SỬ DỤNG HỌC SÂU\par}
+
+\vspace{1.6cm}
+% --- Khối thông tin GVHD / Sinh viên ---
+{\fontsize{13}{20}\selectfont
+\begin{tabular}{@{}r c l@{}}
+\textbf{GVHD}      & : & ThS. Huỳnh Thanh Sơn \\[6pt]
+\textbf{Sinh viên} & : & Phạm Hoàng Dũng \quad-- 22110043 \\
+                   &   & Lê Phạm Hồng Hiên \quad-- 22110059 \\
+\end{tabular}\par}
+
+\vfill
+{\fontsize{13}{16}\selectfont TP. Hồ Chí Minh, tháng 4 / 2026\par}
+\vspace*{0.8cm}
+
+\end{titlepage}

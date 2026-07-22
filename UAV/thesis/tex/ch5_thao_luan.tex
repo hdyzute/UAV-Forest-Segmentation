@@ -1,0 +1,38 @@
+% ============================================================
+\chapter{THẢO LUẬN}
+\label{ch:thao_luan}
+% ============================================================
+
+\section{Hạn chế của phương pháp trọng số nghịch tần suất cố định (Exp 2)}
+
+Kết quả so sánh chi tiết cho thấy cấu hình sử dụng trọng số nghịch tần suất cố định ENet (Exp 2) mang lại mIoU thấp hơn đáng kể trên tất cả các kiến trúc. Mặc dù trọng số lớn giúp mô hình phạt nặng các lỗi trên lớp hiếm (như \textit{Fence, Car, Fallen trees}), cơ chế này làm tăng mạnh lỗi dương tính giả (False Positives) do mô hình xu hướng dự đoán lớp hiếm ở cả các vùng không chắc chắn. Hơn nữa, việc tăng trọng số cho lớp hiếm một cách thụ động dẫn đến sự xâm lấn ranh giới phân vùng sang các lớp phổ biến lân cận (như \textit{Ground vegetation} và \textit{Coniferous trees}), làm suy giảm hiệu năng trên các lớp đa số này và kéo giảm mIoU tổng thể.
+
+\section{Ưu thế của tổ hợp hàm mất mát thích nghi (Exp 4)}
+
+Chiến lược kết hợp thích nghi Focal, Dice và CE (Exp 4) cải thiện vượt trội mIoU trên cả 4 kiến trúc nhờ cơ chế bổ trợ đa chiều:
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Focal Loss} tập trung vào các pixel khó phân loại (ranh giới, vùng biên) thay vì ép theo tần suất lớp, giúp hạn chế tối đa lỗi dương tính giả.
+  \item \textbf{Dice Loss} tối ưu hóa trực tiếp diện tích chồng lấp vùng và có tính chất bất biến với kích thước lớp, đảm bảo các vùng đối tượng nhỏ vẫn đóng góp đáng kể vào mục tiêu tối ưu.
+  \item \textbf{Học trọng số thích nghi (Uncertainty Weighting):} Cơ chế này giải phóng việc tinh chỉnh thủ công các tham số loss, cho phép mô hình tự động cân bằng đóng góp của từng loss dựa trên độ bất định trong từng giai đoạn huấn luyện, đưa mô hình hội tụ về điểm tối ưu tốt nhất.
+\end{itemize}
+
+\section{Phân tích hiện tượng đánh đổi trên vật thể nhỏ}
+\label{sec:discussion_tradeoff}
+
+Một phát hiện quan trọng nhất trong nghiên cứu này là sự đánh đổi giữa điểm IoU lớp và tỷ lệ bỏ sót (Miss Rate) trên các vật thể nhỏ. 
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Độ chính xác (IoU) tăng cao:} Exp 4 mang lại sự cải thiện rất lớn về IoU cho các lớp vật thể nhỏ và hiếm (như \textit{Fence, Car, Fallen trees}). Điều này cho thấy ranh giới phân vùng của các vật thể được dự đoán có độ chính xác hình học và độ khớp rất cao với nhãn chuẩn (nhờ Dice Loss tối ưu hóa vùng chồng lấp).
+  \item \textbf{Tỷ lệ bỏ sót (Miss Rate) tăng nhẹ:} Tuy nhiên, Recall của các lớp này lại giảm đi trong Exp 4 (tương ứng Miss Rate tăng lên, ví dụ với UNet++, Miss Rate của \textit{Fallen trees} tăng từ $10,1\%$ lên $18,0\%$, và \textit{Fence} tăng từ $6,2\%$ lên $14,5\%$). Điều này giải thích là do hàm mất mát thích nghi trong Exp 4 hướng mô hình giảm thiểu tối đa các dự đoán dư thừa để tránh lỗi dương tính giả. Kết quả là mô hình trở nên khắt khe hơn và có xu hướng bỏ sót hoàn toàn các mảnh đối tượng quá nhỏ, mờ nhạt hoặc nằm ở vùng biên khó nhận diện.
+\end{itemize}
+Sự đánh đổi này gợi ý rằng đối với các ứng dụng thực tế coi trọng việc phát hiện tối đa sự hiện diện vật thể (ưu tiên Recall cao, chấp nhận nhiễu), cấu hình CE có trọng số vẫn giữ vai trò nhất định. Tuy nhiên, đối với các bài toán bản đồ hóa UAV yêu cầu độ chính xác hình học cao của đường biên đối tượng (ưu tiên IoU và Precision), tổ hợp loss thích nghi của Exp 4 rõ ràng là sự lựa chọn tối ưu hơn.
+
+\section{Khắc phục các giới hạn thực nghiệm trước đây}
+
+So với các phiên bản khảo sát ban đầu của dự án, thiết kế thực nghiệm hiện tại đã khắc phục thành công nhiều giới hạn lớn để bảo đảm tính chặt chẽ khoa học:
+\begin{enumerate}[leftmargin=1.4cm]
+  \item \textbf{Thống nhất siêu tham số và cấu hình huấn luyện:} Toàn bộ các thí nghiệm trên cả bốn kiến trúc (DeepLabV3+, SegFormer, UNet, UNet++) hiện tại đều sử dụng chung một seed (123), chung số epoch huấn luyện (50 epochs) và chung giao thức đánh giá (sử dụng checkpoint có mIoU kiểm định tốt nhất để kiểm thử). Điều này đảm bảo tính so sánh công bằng tuyệt đối cho các con số hiệu năng.
+  \item \textbf{Mở rộng đa kiến trúc (CNN và Transformer):} Thí nghiệm được mở rộng đồng thời trên 4 kiến trúc với các đặc tính trích xuất đặc trưng khác nhau, củng cố tính vững bền của kết luận thực nghiệm.
+  \item \textbf{Sử dụng bộ dữ liệu hỗn hợp thời tiết:} Việc sử dụng tập dữ liệu kết hợp cả điều kiện nắng và nhiều mây (\textit{sunny+overcast}) với quy mô lớn ($26.242$ cặp ảnh) giúp kiểm chứng tính tổng quát của mô hình trong môi trường UAV thực tế.
+\end{enumerate}
+
+\noindent\textbf{Hạn chế còn tồn tại:} Do bộ dữ liệu vẫn được thu thập từ môi trường mô phỏng (AirSim), việc đánh giá khả năng chuyển miền (domain adaptation) sang các bộ dữ liệu ảnh chụp thực tế (như WildUAV) vẫn là một bước đi cần thiết trong tương lai để xác thực tính ứng dụng thực tiễn của mô hình.

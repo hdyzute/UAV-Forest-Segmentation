@@ -1,0 +1,91 @@
+% ====================== PHỤ LỤC ======================
+\chapter{Tái lập thực nghiệm}
+\label{ap:reproduce}
+
+\section*{A.1. Danh sách notebook và hiệu năng thực nghiệm}
+Các jupyter notebook chính thức được thực thi trên tập dữ liệu kết hợp \texttt{sunny+overcast} được phân chia theo cấu trúc như sau:
+
+\subsection*{1. Kiến trúc DeepLabV3+ (ResNet50)}
+Đặt trong thư mục \texttt{sunny+overcast/deeplabv3plus/}:
+\begin{itemize}[leftmargin=1.4cm]
+  \item \texttt{exp2/deeplabv3plus-exp2.ipynb} --- Thí nghiệm CE + ENet weights (Exp 2), test mIoU $= 0{,}7617$.
+  \item \texttt{exp4/deeplabv3plus-exp4.ipynb} --- Thí nghiệm loss thích nghi (Exp 4), test mIoU $= 0{,}8091$.
+\end{itemize}
+
+\subsection*{2. Kiến trúc SegFormer (MiT-B4)}
+Đặt trong thư mục \texttt{sunny+overcast/segformer/}:
+\begin{itemize}[leftmargin=1.4cm]
+  \item \texttt{exp2/segformer-exp2.ipynb} --- Thí nghiệm CE + ENet weights (Exp 2), test mIoU $= 0{,}7711$.
+  \item \texttt{exp4/segformer-exp4.ipynb} --- Thí nghiệm loss thích nghi (Exp 4), test mIoU $= 0{,}8126$.
+\end{itemize}
+
+\subsection*{3. Kiến trúc UNet (ResNet50)}
+Đặt trong thư mục \texttt{sunny+overcast/unet/}:
+\begin{itemize}[leftmargin=1.4cm]
+  \item \texttt{exp2/unet-exp2.ipynb} --- Thí nghiệm CE + ENet weights (Exp 2), test mIoU $= 0{,}7810$.
+  \item \texttt{exp4/unet-exp4.ipynb} --- Thí nghiệm loss thích nghi (Exp 4), test mIoU $= 0{,}8298$.
+\end{itemize}
+
+\subsection*{4. Kiến trúc UNet++ (ResNet50)}
+Đặt trong thư mục \texttt{sunny+overcast/unet++/}:
+\begin{itemize}[leftmargin=1.4cm]
+  \item \texttt{exp2/unetpp-exp2.ipynb} --- Thí nghiệm CE + ENet weights (Exp 2), test mIoU $= 0{,}7956$.
+  \item \texttt{exp4/unetpp-exp4.ipynb} --- Thí nghiệm loss thích nghi (Exp 4), test mIoU $= 0{,}8374$.
+\end{itemize}
+
+\section*{A.2. Bảng màu 11 lớp đối tượng}
+\begin{center}
+\small
+\begin{tabular}{c l l}
+\toprule
+\textbf{ID} & \textbf{Lớp} & \textbf{Màu (R,G,B)} \\
+\midrule
+0  & Sky               & (0, 255, 255) \\
+1  & Deciduous\_trees  & (0, 127, 0) \\
+2  & Coniferous\_trees & (19, 132, 69) \\
+3  & Fallen\_trees     & (0, 53, 65) \\
+4  & Dirt\_ground      & (130, 76, 0) \\
+5  & Ground\_vegetation& (152, 251, 152) \\
+6  & Rocks             & (151, 126, 171) \\
+7  & Building          & (250, 150, 0) \\
+8  & Fence             & (115, 176, 195) \\
+9  & Car               & (123, 123, 123) \\
+10 & Empty             & (0, 0, 0) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{A.3. Công thức trọng số lớp}
+Trọng số nghịch tần suất ENet được tính toán tự động dựa trên PT.~\ref{eq:enet_w} với tham số điều hòa $\kappa = 1{,}02$ tính trên phân phối pixel của toàn bộ tập huấn luyện kết hợp.
+
+\section*{A.4. Cấu trúc mã nguồn (\texttt{src/})}
+\begin{center}
+\small
+\begin{tabular}{l l}
+\toprule
+\textbf{Module} & \textbf{Chức năng} \\
+\midrule
+\texttt{src/data/}       & \texttt{dataset.py}, \texttt{splits.py}, \texttt{transforms.py} --- nạp dữ liệu, chia tập, tăng cường \\
+\texttt{src/models/}     & Định nghĩa các kiến trúc mô hình phân vùng từ thư viện SMP \\
+\texttt{src/training/}   & \texttt{losses.py}, \texttt{metrics.py}, \texttt{trainer.py} --- định nghĩa loss thích nghi, độ đo và huấn luyện \\
+\texttt{src/evaluation/} & \texttt{evaluator.py}, \texttt{visualize.py} --- chạy kiểm thử và phân tích lỗi vật thể nhỏ \\
+\texttt{src/utils/}      & Cấu hình chung và các hàm helper ghi log \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{A.5. Pipeline thực hiện}
+Quy trình thực hiện chung trong mỗi cấu hình thí nghiệm được chia làm 4 notebook kế tiếp:
+\begin{center}
+\small
+\begin{tabular}{l c c l}
+\toprule
+\textbf{Notebook} & \textbf{Internet} & \textbf{GPU} & \textbf{Vai trò} \\
+\midrule
+NB01 & ON  & OFF & Chuẩn bị các asset, thư viện và trọng số pretrained offline \\
+NB02 & OFF & ON  & Thực hiện huấn luyện mô hình, tự động lưu checkpoint có mIoU tốt nhất \\
+NB03 & ON  & ON  & Thực hiện suy diễn trên tập kiểm thử và phân tích lỗi đối tượng nhỏ \\
+NB04 & OFF & OFF & Tổng hợp số liệu và trực quan hóa kết quả phân vùng \\
+\bottomrule
+\end{tabular}
+\end{center}

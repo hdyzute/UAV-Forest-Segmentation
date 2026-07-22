@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Model weights and large checkpoint files (>100MB)
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.bin
+*.onnx
+
+# Compressed archives and checkpoints
+*.zip
+*.tar
+*.gz
+*.7z
+*.rar
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Antigravity temporary scratch files
+scratch/
+.tempmediaStorage/
+
+# OS / Editor generated files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/

@@ -1,0 +1,86 @@
+% ============================================================
+\chapter{MỞ ĐẦU}
+\label{ch:mo_dau}
+% ============================================================
+
+\section{Đặt vấn đề}
+
+Rừng đóng vai trò sống còn đối với cân bằng sinh thái, điều hòa khí hậu và đa dạng
+sinh học. Việc giám sát hiện trạng rừng --- phát hiện cây đổ, theo dõi thảm thực
+vật, kiểm kê hạ tầng (đường, hàng rào, công trình) --- truyền thống dựa vào khảo
+sát thực địa, tốn nhiều công sức và khó bao phủ trên diện rộng. Sự phát triển của
+thiết bị bay không người lái (UAV) cùng các mô hình thị giác máy tính hiện đại đã
+mở ra hướng tự động hóa: ảnh chụp từ UAV được \textbf{phân đoạn ngữ nghĩa}
+(\textit{semantic segmentation}) --- gán nhãn lớp cho từng điểm ảnh --- để tạo ra
+bản đồ hiện trạng chi tiết.
+
+Tuy vậy, dữ liệu rừng thu thập từ UAV mang nhiều thách thức đặc thù khiến các mô
+hình phân đoạn thông dụng hoạt động chưa hiệu quả:
+
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Mất cân bằng lớp nghiêm trọng.} Một vài lớp như thảm thực vật
+  (\textit{Ground\_vegetation}) hay cây lá kim (\textit{Coniferous}) chiếm phần lớn
+  số điểm ảnh, trong khi các lớp quan trọng nhưng nhỏ/hiếm như hàng rào
+  (\textit{Fence}), xe (\textit{Car}), cây đổ (\textit{Fallen\_trees}) chỉ chiếm
+  một phần rất nhỏ. Trên bộ dữ liệu sử dụng trong báo cáo, tỷ lệ chênh lệch lên tới
+  \textbf{2.761 lần}.
+  \item \textbf{Sự thay đổi miền dữ liệu (domain shift).} Góc chụp (pitch) và độ
+  cao bay khác nhau làm phân bố lớp biến đổi mạnh; ví dụ lớp \textit{Sky} chỉ xuất
+  hiện ở các chuỗi ảnh chụp ngang ($pitch = 0^\circ$) và biến mất hoàn toàn ở ảnh
+  chụp thẳng xuống ($pitch = -90^\circ$).
+  \item \textbf{Vật thể nhỏ và biên mảnh.} Hàng rào, xe có kích thước nhỏ, dễ bị
+  bỏ sót hoặc nhầm lẫn với nền.
+\end{itemize}
+
+Khi huấn luyện với hàm mất mát Cross-Entropy thuần --- tối ưu trung bình trên từng
+điểm ảnh --- mô hình bị các lớp đa số chi phối, dẫn tới hiện tượng
+\textit{nghịch lý độ chính xác}: chỉ số tổng thể trông tốt nhưng lớp hiếm bị dự đoán
+rất kém. Đây chính là động lực để nghiên cứu các \textbf{chiến lược xử lý mất cân
+bằng lớp} ở cấp độ hàm mất mát.
+
+\section{Mục tiêu nghiên cứu}
+
+Mục tiêu tổng quát của đề tài là \textbf{xây dựng và đánh giá một quy trình phân
+đoạn ngữ nghĩa ảnh UAV rừng}, trong đó trọng tâm là so sánh có hệ thống các chiến
+lược xử lý mất cân bằng lớp. Cụ thể:
+
+\begin{enumerate}[leftmargin=1.4cm]
+  \item Phân tích định lượng mức độ mất cân bằng lớp và sự thay đổi miền của bộ dữ
+  liệu rừng UAV.
+  \item Trình bày cơ sở lý thuyết của các hàm mất mát thường dùng cho bài toán mất
+  cân bằng: Cross-Entropy có trọng số, Focal Loss, Dice Loss và các tổ hợp.
+  \item Thực nghiệm các chiến lược xử lý mất cân bằng lớp trên bốn kiến trúc mạng phổ biến (DeepLabV3+, SegFormer, UNet, UNet++) trong điều kiện so sánh nhất quán, đánh giá bằng mIoU và IoU theo từng lớp.
+  \item Phân tích sâu ảnh hưởng của từng chiến lược lên các lớp hiếm, từ đó đưa ra khuyến nghị.
+  \item Mở rộng đánh giá xuyên điều kiện thời tiết (sunny sang overcast và ngược lại) và trên bộ dữ liệu thực tế bên ngoài (WildUAV) để kiểm chứng khả năng tổng quát hóa.
+\end{enumerate}
+
+\section{Đối tượng và phạm vi}
+
+\begin{itemize}[leftmargin=1.4cm]
+  \item \textbf{Đối tượng:} bài toán phân đoạn ngữ nghĩa đa lớp trên ảnh UAV rừng;
+  các hàm mất mát xử lý mất cân bằng lớp.
+  \item \textbf{Dữ liệu:} bộ dữ liệu rừng UAV (mô phỏng AirSim) công bố trên Zenodo, gồm 18 chuỗi ảnh kết hợp (9 chuỗi thuộc sunny, 9 chuỗi thuộc overcast) với 11 lớp ngữ nghĩa, cùng dữ liệu thực tế WildUAV để đánh giá domain adaptation. Chi tiết trong Chương~\ref{ch:du_lieu}.
+  \item \textbf{Mô hình:} khảo sát và đối sánh trên bốn kiến trúc mạng phân đoạn ngữ nghĩa tiêu biểu: DeepLabV3+, SegFormer, UNet, và UNet++ (với encoder CNN ResNet50 và Transformer MiT-B4 khởi tạo từ ImageNet).
+  \item \textbf{Phạm vi:} báo cáo tập trung vào chiến lược ở cấp hàm mất mát (CE trọng số lớp cố định và Focal+Dice+CE thích nghi) trên nhiều kiến trúc khác nhau để chứng minh tính tổng quát của phương pháp.
+\end{itemize}
+
+\section{Đóng góp của báo cáo}
+
+\begin{itemize}[leftmargin=1.4cm]
+  \item Một phân tích định lượng đầy đủ về mất cân bằng lớp và domain gap của bộ dữ
+  liệu rừng UAV.
+  \item Nghiên cứu thực nghiệm đối sánh hai chiến lược loss chính (Exp 2 và Exp 4) trên bốn kiến trúc mạng khác nhau, chỉ ra rõ sự đánh đổi giữa IoU vùng và tỷ lệ bỏ sót (Miss Rate) trên vật thể nhỏ.
+  \item Bằng chứng thực nghiệm rằng cơ chế trọng số thích nghi (uncertainty weighting) luôn cho kết quả mIoU tốt nhất trên tất cả các kiến trúc mạng và có khả năng thích ứng cao khi chuyển đổi miền dữ liệu sang WildUAV.
+  \item Bộ mã nguồn và các jupyter notebook tái lập được đầy đủ kết quả, kèm quy trình huấn luyện/đánh giá chuẩn hóa.
+\end{itemize}
+
+\section{Bố cục báo cáo}
+
+\textbf{Chương~\ref{ch:mo_dau}} giới thiệu vấn đề, mục tiêu và phạm vi.
+\textbf{Chương~\ref{ch:tong_quan}} trình bày tổng quan và cơ sở lý thuyết về phân
+đoạn ngữ nghĩa, kiến trúc mạng và các hàm mất mát.
+\textbf{Chương~\ref{ch:du_lieu}} mô tả bộ dữ liệu, phân tích mất cân bằng lớp và
+phương pháp thực nghiệm.
+\textbf{Chương~\ref{ch:ket_qua}} trình bày kết quả định lượng và định tính.
+\textbf{Chương~\ref{ch:thao_luan}} thảo luận, phân tích lỗi và nêu các hạn chế.
+\textbf{Chương~\ref{ch:ket_luan}} kết luận và đề xuất hướng phát triển.

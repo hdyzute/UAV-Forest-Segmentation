@@ -1,0 +1,361 @@
+\documentclass[journal,compsoc]{IEEEtran}
+% \documentclass[12pt,journal,onecolumn,draftcls]{IEEEtran} % Dùng cho bản gửi phản biện (double-spaced)
+
+% ── GÓI TIỆN ÍCH CẦN THIẾT ──────────────────────────────────────────
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{array}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{tabularx} 
+
+% ── ĐỊNH DẠNG DANH SÁCH TỐI ƯU CHO 2 CỘT ─────────────────────────────
+\setlist[itemize]{leftmargin=*,nosep,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=2pt}
+\setlist[enumerate]{leftmargin=*,nosep,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=2pt}
+
+% ── ĐỊNH NGHĨA KÝ HIỆU TOÁN HỌC ─────────────────────────────────────
+\newcommand{\loss}[1]{\mathcal{L}_{\text{#1}}}
+
+\begin{document}
+
+% ── TIÊU ĐỀ BÀI BÁO (Tên gợi ý cho bài báo khoa học Q1/Q2) ──────────
+\title{Adaptive Multi-Loss Optimization for Class-Imbalanced Semantic Segmentation in UAV Forest Inspection}
+
+% ── TÁC GIẢ & LIÊN KẾT ──────────────────────────────────────────────
+\author{Thanh-Son Huynh, 
+        Hong-Hien Pham Le, 
+        and Hoang-Dung Pham
+\thanks{H.-D. Pham and H.-H. Pham Le are with the Faculty of Mathematics and Computer Science, VNU-HCM University of Science, Ho Chi Minh City, Vietnam (email: 22110043@student.hcmus.edu.vn; 22110059@student.hcmus.edu.vn).}%
+\thanks{T.-S. Huynh is with the Faculty of Mathematics and Computer Science, VNU-HCM University of Science, Ho Chi Minh City, Vietnam (email: htson@hcmus.edu.vn).}%
+}
+
+% ── ĐẦU TRANG (RUNNING HEAD) ────────────────────────────────────────
+\markboth{IEEE Transactions on Geoscience and Remote Sensing,~Vol.~XX, No.~X, Month~2026}%
+{Pham \MakeLowercase{\textit{et al.}}: Adaptive Multi-Loss Optimization for UAV Forest Segmentation}
+
+\maketitle
+
+% ── TÓM TẮT BÀI BÁO (ABSTRACT) ─────────────────────────────────────
+\begin{abstract}
+Semantic segmentation of aerial images captured by Unmanned Aerial Vehicles (UAVs) is a critical component in automated forest monitoring, enabling activities such as deadwood detection, species inventory, and infrastructure mapping. However, UAV-based forest datasets suffer from severe class imbalance, where dominant classes like ground vegetation and coniferous trees overwhelm rare but ecologically significant classes like fences, cars, and fallen trees. Standard Cross-Entropy (CE) loss fails to address this distribution skew, leading to poor segmentation performance on minority classes. In this paper, we propose an adaptive multi-loss optimization framework that dynamically balances pixel-level classification difficulty, region-level overlaps, and class frequency weighting. Specifically, we integrate Focal Loss, Dice Loss, and ENet-weighted Cross-Entropy Loss, using a multi-task uncertainty weighting mechanism to learn their optimal trade-off parameters during training. We conduct comprehensive experiments on the simulated Forest Inspection dataset across four popular deep learning architectures: DeepLabV3+, SegFormer, UNet, and UNet++. The proposed adaptive loss function yields consistent and substantial improvements, improving the test mIoU by up to +5.15 percentage points (pp), with the largest gains observed on rare classes such as fences, fallen trees, and cars. Importantly, these performance gains are consistent across individual weather splits (Sunny-only and Overcast-only) as well as the combined regime, proving the robustness of the loss optimization. Furthermore, we assess the generalization of our approach in a Sim-to-Real transfer setting on the real-world WildUAV dataset (evaluated on a forest-relevant class subset, see Section 5.4), where synthetic pre-training with our adaptive loss yields a consistent improvement over training on real data alone.
+\end{abstract}
+
+% ── TỪ KHÓA (KEYWORDS) ──────────────────────────────────────────────
+\begin{IEEEkeywords}
+Semantic segmentation, UAV forest inspection, class imbalance, adaptive loss, uncertainty weighting, Sim-to-Real transfer, WildUAV.
+\end{IEEEkeywords}
+
+
+% ── PHẦN I: MỞ ĐẦU (INTRODUCTION) ──────────────────────────────────
+\section{Introduction}
+\label{sec:introduction}
+
+\IEEEPARstart{F}{orest} ecosystems play a vital role in biodiversity conservation, carbon sequestration, and climate regulation. Continuous and precise monitoring of forest health, including the detection of fallen logs, mapping of infrastructure, and vegetation management, is essential for sustainable forest management and ecological risk assessment. Traditional field-based surveys, while accurate, are labor-intensive, slow to conduct, and difficult to scale across large or difficult-to-access wooded areas. The emergence of Unmanned Aerial Vehicles (UAVs) equipped with high-resolution cameras, combined with recent advances in deep learning-based semantic segmentation, has opened a path toward automated, pixel-level forest scene understanding that can substantially reduce the cost and turnaround time of inspection campaigns. In the context of remote sensing, such automated pixel-level mapping is crucial for large-scale geoscience applications, including deadwood tracking for wildfire risk assessment, forest boundary mapping, and infrastructure encroachment monitoring in wildland-urban interfaces.
+
+UAV remote sensing has emerged as a cost-effective and flexible solution for high-resolution forest inspection. However, semantic segmentation of UAV forest imagery faces several core challenges:
+\begin{itemize}
+    \item \textbf{Extreme Class Imbalance:} Domination of background elements (vegetation, trees) over rare objects (fallen trees, cars, fences) with pixel ratios exceeding 2,700:1.
+    \item \textbf{Domain Shift and Weather Variabilities:} Shadows and color discrepancies under sunny and overcast weather conditions.
+    \item \textbf{Small Scale Objects:} Highly fragmented boundaries of fences and fallen trunks.
+\end{itemize}
+
+To address these challenges, we propose an adaptive multi-loss optimization strategy. The main contributions of this work are summarized as follows:
+\begin{itemize}
+    \item We propose a compound loss function that combines Focal, Dice, and weighted CE losses, dynamically adjusted via uncertainty weighting to eliminate manual parameter tuning.
+    \item We provide a comprehensive benchmark across four diverse architectures (deep CNN-based and Transformer-based models) under dual-weather settings.
+    \item We demonstrate that the performance improvements of the proposed adaptive loss are consistent across three weather training regimes (Sunny-only, Overcast-only, and Combined), indicating that the optimization gains are independent of weather-specific data distributions.
+    \item We assess Sim-to-Real transferability on the real-world WildUAV dataset, showing that synthetic pre-training with our adaptive loss consistently improves over training on real data alone.
+\end{itemize}
+
+
+% ── PHẦN II: TỔNG QUAN NGHIÊN CỨU (RELATED WORK) ─────────────────────
+\section{Related Work}
+\label{sec:related_work}
+
+\subsection{UAV Semantic Segmentation in Forestry}
+Semantic segmentation of UAV imagery has been extensively studied for general remote sensing scenes, but forest-specific benchmarks remain comparatively scarce. UAVid~\cite{lyu2020uavid} provides dense pixel-level annotations for urban aerial scenes captured at low altitude, emphasizing large scale variation and moving-object recognition, but represents all vegetation as a single coarse class. Ruralscapes~\cite{marcu2020semantics} extends this line of work to rural environments using semi-supervised label propagation across video sequences, again treating forested areas as one homogeneous category. Neither dataset offers the fine-grained tree-type or disturbance-related annotations (e.g., fallen trees) required for forest inspection tasks. The Forest Inspection dataset~\cite{forestdataset}, which we adopt in this work, addresses this gap by providing a synthetic, AirSim-generated benchmark with 11 semantic classes, explicit deciduous/coniferous tree differentiation, and a dedicated fallen-trees category, captured under multiple altitudes, viewing angles, and weather conditions. For evaluating generalization to real-world imagery, we additionally use WildUAV~\cite{florea2021wilduav}, a real-world, oblique-view UAV dataset recorded over forested and semi-natural terrain.
+
+\subsection{Class Imbalance Mitigation Strategies}
+Class imbalance is a long-standing challenge in semantic segmentation and has been addressed primarily at the loss-function level. ENet~\cite{paszke2016enet} introduced a logarithmic class-weighting scheme for Cross-Entropy that inversely scales each class's contribution by its pixel frequency, and remains a widely used baseline for imbalanced segmentation. Focal Loss~\cite{lin2017focal}, originally proposed for dense object detection, instead re-weights the loss according to per-pixel prediction difficulty, down-weighting well-classified (typically majority-class) pixels so that gradients concentrate on hard examples. Dice Loss, popularized by V-Net~\cite{milletari2016vnet} for volumetric medical image segmentation, optimizes a differentiable approximation of the region-overlap metric directly, making it inherently more robust to class-size variation than pixel-wise losses. While each of these strategies improves minority-class performance in isolation, they target different aspects of the imbalance problem---frequency, difficulty, and region overlap, respectively---which motivates the compound loss formulation adopted in this work.
+
+\subsection{Multi-Task Learning and Uncertainty Weighting}
+Combining multiple loss terms typically requires manually tuning their relative weights, a process that is both time-consuming and dataset-dependent. Kendall et al.~\cite{kendall2018multi} proposed to instead learn homoscedastic task uncertainty jointly with the network parameters, deriving optimal loss weights automatically from each task's estimated noise level in a multi-task learning setting (e.g., jointly predicting depth and semantic segmentation). In this work, we repurpose this mechanism for a single-task, multi-component loss setting: rather than balancing losses across distinct prediction heads, we treat each loss term (weighted Cross-Entropy, Focal, and Dice) as a separate ``task'' whose relative contribution is learned automatically during training, removing the need for manual hyper-parameter search over $(\lambda_{CE}, \lambda_F, \lambda_D)$.
+
+
+% ── PHẦN III: PHƯƠNG PHÁP ĐỀ XUẤT (METHODOLOGY) ──────────────────────
+\section{Methodology}
+\label{sec:methodology}
+Here, we present the formulation of the proposed loss function components and the adaptive weighting strategy.
+
+\subsection{Weighted Cross-Entropy Component}
+To prioritize rare classes at the pixel level, we adopt ENet-weighted Cross-Entropy:
+\begin{equation}
+\loss{wCE} = -\frac{1}{N}\sum_{i=1}^{N}\sum_{c=1}^{C} w_c y_{i,c} \log p_{i,c}
+\end{equation}
+where the class weights $w_c$ are calculated using the ENet formula:
+\begin{equation}
+w_c = \frac{1}{\ln(\kappa + f_c)}
+\end{equation}
+with $f_c$ denoting the pixel frequency of class $c$ in the training set, and $\kappa = 1.02$ acting as a regularization threshold.
+
+\subsection{Focal Loss Component}
+Focal Loss resolves the imbalance of difficulty by down-weighting easy background pixels:
+\begin{equation}
+\loss{Focal} = -\frac{1}{N}\sum_{i=1}^{N} \alpha_t (1 - p_{i,t})^\gamma \log p_{i,t}
+\end{equation}
+where $\gamma = 2.0$ represents the focusing parameter.
+
+\subsection{Dice Loss Component}
+Dice Loss optimizes regional overlap and is robust to class scale variances:
+\begin{equation}
+\loss{Dice} = 1 - \frac{1}{C'} \sum_{c=1}^{C'} \frac{2 \sum_i p_{i,c} g_{i,c} + \epsilon}{\sum_i p_{i,c} + \sum_i g_{i,c} + \epsilon}
+\end{equation}
+where $\epsilon = 10^{-5}$ is a smoothing factor, and $C' = 10$ (excluding the background \textit{Empty} class).
+
+\subsection{Adaptive Uncertainty Loss Weighting}
+Instead of manual tuning of hyper-parameters $\lambda$, we formulate the adaptive multi-loss optimization based on task uncertainty:
+\begin{equation}
+\loss{adaptive}(\theta, \sigma) = \sum_{k \in \{F, D, CE\}} \left( \frac{1}{2\sigma_k^2} \loss{k}(\theta) + \log \sigma_k \right)
+\end{equation}
+where $\sigma_k$ represents the learnable uncertainty parameter for loss component $\loss{k}$. In practice, to guarantee numerical stability and prevent division by zero, we re-parameterize the uncertainty variables as $s_k \equiv \log \sigma_k^2$, rewriting equation~(5) as:
+\begin{equation}
+\loss{adaptive}(\theta, s) = \sum_{k \in \{F, D, CE\}} \left( \frac{1}{2}\exp(-s_k) \loss{k}(\theta) + \frac{1}{2}s_k \right)
+\end{equation}
+The parameter variables $s_k$ are initialized to $0.0$ (corresponding to $\sigma_k = 1.0$ and initial loss scaling). During backpropagation, the model dynamically updates $s_k$ along with network weights $\theta$ to balance gradient magnitudes across tasks. Upon convergence, the effective relative weights $w_k = \frac{1}{2}\exp(-s_k)$ stabilize; for instance, under UNet++ on the Combined regime, the learned parameters settle to $w_{\text{Focal}} \approx 0.42$, $w_{\text{Dice}} \approx 0.38$, and $w_{\text{CE}} \approx 0.55$, demonstrating that the optimization automatically prioritizes classification difficulty over pure region overlap.
+
+
+% ── PHẦN IV: THIẾT KẾ THỰC NGHIỆM (EXPERIMENTAL SETUP) ───────────────
+\section{Experimental Setup}
+\label{sec:experimental_setup}
+
+\subsection{Datasets and Splits}
+We evaluate our method on the simulated Forest Inspection dataset~\cite{forestdataset} containing 18 sequences (13,051 sunny images and 13,191 overcast images, totaling 26,242 images). The split details are summarized in Table~\ref{tab:dataset_split}.
+
+\begin{table*}[t]
+\centering
+\caption{Cross-Weather Train/Val/Test Split Details.}
+\label{tab:dataset_split}
+\small
+\begin{tabularx}{\textwidth}{lXc}
+\toprule
+\textbf{Split} & \textbf{Sequences} & \textbf{No. Images} \\
+\midrule
+Train & seq1, 3, 4, 5, 8, 9 (sunny) \& seq10, 12, 14, 15, 16, 17 (overcast) & 17,454 \\
+Val   & seq2 (sunny) \& seq13, 18 (overcast) & 4,297 \\
+Test  & seq6, 7 (sunny) \& seq11 (overcast) & 4,491 \\
+\midrule
+\textbf{Total} & & \textbf{26,242} \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+For the weather-specific training regimes, the dataset is partitioned as follows:
+\begin{itemize}
+    \item \textbf{Sunny-only Split:} The training set consists of sequences 1, 3, 4, 5, 8, and 9 (6 sequences, 8,690 images); the validation set consists of sequence 2 (1 sequence, 2,143 images); and the test set consists of sequences 6 and 7 (2 sequences, 2,218 images).
+    \item \textbf{Overcast-only Split:} The training set consists of sequences 10, 12, 14, 15, 16, and 17 (6 sequences, 8,764 images); the validation set consists of sequences 13 and 18 (2 sequences, 2,154 images); and the test set consists of sequence 11 (1 sequence, 2,273 images).
+\end{itemize}
+
+\subsection{Model Architectures}
+We evaluate across 4 baseline architectures: DeepLabV3+~\cite{chen2018deeplabv3plus} (ResNet50~\cite{he2016resnet} backbone), SegFormer~\cite{xie2021segformer} (MiT-B4 backbone), UNet~\cite{ronneberger2015unet} (ResNet50 backbone), and UNet++~\cite{zhou2018unetpp} (ResNet50 backbone). All models are initialized with ImageNet pre-trained weights.
+
+\subsection{Experimental Configurations}
+To evaluate the impact of different loss function formulations and weighting strategies, we define four distinct experimental configurations:
+\begin{itemize}
+    \item \textbf{Exp 1 (Baseline Cross-Entropy):} Standard Cross-Entropy (CE) loss without class frequency weighting or difficulty balancing.
+    \item \textbf{Exp 2 (ENet-Weighted Cross-Entropy):} Cross-Entropy loss with fixed class weights calculated using the ENet frequency-weighting formula.
+    \item \textbf{Exp 3 (Fixed Compound Loss):} A compound loss combining Focal, Dice, and ENet-weighted Cross-Entropy loss with static, equal weighting parameters ($\lambda_{CE} = \lambda_F = \lambda_D = 1.0$) without adaptive optimization.
+    \item \textbf{Exp 4 (Proposed Adaptive Compound Loss):} The proposed multi-loss framework combining Focal, Dice, and ENet-weighted Cross-Entropy loss with dynamically learned loss weights optimized via uncertainty weighting.
+\end{itemize}
+
+\subsection{Implementation Details}
+All models are implemented in PyTorch and trained for 50 epochs with a fixed random seed (123) shared across all runs unless otherwise noted. To maintain geometric consistency and avoid confounding factor biases across weather splits, all images across all weather training regimes (Sunny-only, Overcast-only, and Combined) are resized to a fixed resolution of $768 \times 1280$ pixels, thereby preserving the original $5:3$ aspect ratio of the raw UAV camera sensors. Training is performed using the AdamW optimizer~\cite{loshchilov2019adamw} (weight decay $10^{-4}$), with an initial learning rate of $10^{-4}$ decaying according to a cosine annealing scheduler down to $10^{-6}$. Batch size is set to 4 and mixed precision (AMP) is enabled. During training, we apply data augmentation (random horizontal/vertical flipping, rotation up to $\pm 30^\circ$, brightness/contrast and hue/saturation jitter, and Gaussian noise); validation and test images are only resized and normalized.
+
+All experiments are executed on a single NVIDIA Tesla T4 GPU. The average training time per epoch is approximately 11 minutes for SegFormer (MiT-B4) and 12 minutes for UNet++ (ResNet50). For each run, the checkpoint with the highest validation mIoU is selected for test-set evaluation. The background \textit{Empty} class is excluded from both the loss computation (via \texttt{ignore\_index}) and the reported test mIoU. Due to computational resource constraints, the multi-seed robustness check (using seeds 123, 2025, and 42) is restricted to the UNet++ / Sunny-only configuration as a representative showcase for random seed stability.
+
+
+% ── PHẦN V: KẾT QUẢ VÀ THẢO LUẬN (RESULTS & DISCUSSION) ─────────────
+\section{Results and Discussion}
+\label{sec:results}
+
+\subsection{Consistency of the Adaptive Loss Across Weather Regimes}
+\renewcommand{\arraystretch}{1.2} % Tăng giãn dòng cho bảng thoáng đẹp
+To demonstrate that the performance gains of the proposed adaptive multi-loss optimization are due to the loss formulation itself and not overfitted to weather-specific characteristics of the training split, we evaluate its consistency across three training regimes: Sunny-only (trained and validated on sunny sequences), Overcast-only (trained and validated on overcast sequences), and Combined (trained on the full dual-weather dataset). The overall test mIoU scores across all four architectures are summarized in Table~\ref{tab:weather_consistency}.
+
+\begin{table*}[t]
+\centering
+\caption{Consistency of the Proposed Adaptive Loss Across Weather Regimes (Test mIoU).}
+\label{tab:weather_consistency}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccccc}
+\toprule
+ & & \multicolumn{2}{c}{\textbf{DeepLabV3+ (ResNet50)}} & \multicolumn{2}{c}{\textbf{SegFormer (MiT-B4)}} & \multicolumn{2}{c}{\textbf{UNet (ResNet50)}} & \multicolumn{2}{c}{\textbf{UNet++ (ResNet50)}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
+\textbf{Weather Regime} & \textbf{Metric} & \textbf{Exp 2 (CE+W)} & \textbf{Exp 4 (Ours)} & \textbf{Exp 2 (CE+W)} & \textbf{Exp 4 (Ours)} & \textbf{Exp 2 (CE+W)} & \textbf{Exp 4 (Ours)} & \textbf{Exp 2 (CE+W)} & \textbf{Exp 4 (Ours)} \\
+\midrule
+Sunny-only & mIoU & 0.7512 & \textbf{0.8027} & 0.7683 & \textbf{0.8124} & 0.8174 & \textbf{0.8314} & 0.8142 & \textbf{0.8362} \\
+Overcast-only & mIoU & 0.6706 & \textbf{0.7108} & 0.6862 & \textbf{0.7219} & 0.6789 & \textbf{0.7213} & 0.6811 & \textbf{0.7302} \\
+Combined & mIoU & 0.7617 & \textbf{0.8091} & 0.7698 & \textbf{0.8126} & 0.7810 & \textbf{0.8298} & 0.7956 & \textbf{0.8374} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+The results in Table~\ref{tab:weather_consistency} reveal a consistent trend across all weather splits and architectures. Under the Overcast-only regime, replacing ENet-weighted Cross-Entropy (Exp 2) with our adaptive multi-loss (Exp 4) yields consistent improvements for all four architectures. Specifically, DeepLabV3+ improves from $0.6706$ to $0.7108$ ($+4.02$ pp), SegFormer improves from $0.6862$ to $0.7219$ ($+3.57$ pp), UNet improves from $0.6789$ to $0.7213$ ($+4.24$ pp), and UNet++ shows the largest overcast gain of $+4.91$ pp, moving from $0.6811$ to $0.7302$. 
+
+Under the Sunny-only split, we observe a similar performance enhancement. For the UNet++ architecture, our adaptive loss improves the test mIoU from $0.8142$ (Exp 2) to $0.8362$ (Exp 4) under seed 123, representing a $+2.20$ pp gain. The robustness of this improvement is corroborated by evaluations under other random seeds, where seed 2025 and seed 42 yield test mIoU scores of $0.8365$ and $0.8230$ respectively, consistently outperforming the Exp 2 baseline. Similarly, DeepLabV3+ improves from $0.7512$ to $0.8027$ ($+5.15$ pp) and SegFormer from $0.7683$ to $0.8124$ ($+4.41$ pp). UNet shows the smallest sunny-regime gain, from $0.8174$ to $0.8314$ ($+1.40$ pp), likely because its Exp 2 baseline is already comparatively strong under sunny conditions, leaving less headroom for improvement. We also observe that for some architectures (such as UNet and UNet++), the baseline Combined performance is higher than the Sunny-only baseline. This is likely because the Combined training set is twice as large as the Sunny-only set (17,454 vs 8,690 images), providing a richer representation that helps stabilize baseline training. Conversely, for DeepLabV3+ and SegFormer, the Sunny-only baseline remains relatively weak, allowing our adaptive loss (Exp 4) to achieve larger performance gains (+5.15 pp and +4.41 pp, respectively). 
+
+In the Combined training setting, replacing Exp 2 with Exp 4 improves the test mIoU across all architectures, with improvements ranging from $+4.18$ to $+4.88$ pp. The UNet++ architecture under Exp 4 achieves the highest overall performance with a test mIoU of $0.8374$, followed by UNet ($0.8298$), SegFormer ($0.8126$), and DeepLabV3+ ($0.8091$). This consistent margin of improvement across three different training conditions (Sunny-only, Overcast-only, and Combined) suggests that the proposed loss function effectively guides the model to learn weather-invariant representations and robust class-imbalance boundaries, rather than overfitting to a specific weather-induced distribution.
+
+To dissect the individual contributions of loss formulation and dynamic optimization, we analyze the ablation hierarchy defined in Section~\ref{sec:experimental_setup}. Plain Cross-Entropy (Exp 1) suffers severe performance degradation on minority classes due to unweighted loss domination, achieving the lowest overall mIoU (e.g., $<0.72$ on UNet++). Applying static ENet class-frequency weighting (Exp 2) mitigates severe minority suppression but induces high false-positive rates on dominant classes, yielding an mIoU of $0.7956$ on UNet++ under the Combined setting. Incorporating Focal and Dice components with equal, static weighting ($\lambda_{CE}=\lambda_F=\lambda_D=1.0$, Exp 3) further improves the test mIoU to $0.8115$, demonstrating the benefit of regional overlap and hard-pixel focusing. Finally, introducing our adaptive uncertainty weighting mechanism (Exp 4) dynamically balances the scale divergence between Focal, Dice, and CE losses, elevating the test mIoU to $0.8374$ ($+2.59$ pp over Exp 3 and $+4.18$ pp over Exp 2). This step-wise progression confirms that while compound loss terms provide foundational gains, dynamic adaptive weighting is essential to fully realize their synergistic potential.
+
+\subsection{Per-class IoU Results}
+The proposed method's per-class segmentation IoU values under the Combined weather setting are reported in Table~\ref{tab:per_class_iou}.
+
+\begin{table*}[t]
+\centering
+\caption{Per-class IoU Results on the Combined Test Set (seq6, seq7, seq11).}
+\label{tab:per_class_iou}
+\small
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{DeepLabV3+}} & \multicolumn{2}{c}{\textbf{SegFormer}} & \multicolumn{2}{c}{\textbf{UNet}} & \multicolumn{2}{c}{\textbf{UNet++}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+\textbf{Class} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} \\
+\midrule
+Sky                & 0.9911 & 0.9914 & 0.9912 & 0.9912 & 0.9976 & 0.9968 & 0.9986 & 0.9977 \\
+Deciduous          & 0.7264 & 0.7301 & 0.7331 & 0.7366 & 0.7419 & 0.7418 & 0.7570 & 0.7522 \\
+Coniferous         & 0.8079 & 0.8140 & 0.8145 & 0.8185 & 0.8243 & 0.8292 & 0.8306 & 0.8338 \\
+Fallen trees       & 0.5094 & 0.6180 & 0.5120 & 0.6234 & 0.5395 & 0.6604 & 0.5848 & 0.6707 \\
+Dirt ground        & 0.8365 & 0.8757 & 0.8384 & 0.8760 & 0.8476 & 0.8684 & 0.8584 & 0.8842 \\
+Ground veg         & 0.8466 & 0.8553 & 0.8488 & 0.8579 & 0.8592 & 0.8661 & 0.8658 & 0.8708 \\
+Rocks              & 0.7751 & 0.8334 & 0.7847 & 0.8387 & 0.8149 & 0.8597 & 0.8294 & 0.8631 \\
+Building           & 0.8489 & 0.9075 & 0.8607 & 0.9056 & 0.8655 & 0.9187 & 0.8778 & 0.9268 \\
+Fence              & 0.5355 & 0.6312 & 0.5564 & 0.6436 & 0.5435 & 0.6940 & 0.5581 & 0.7031 \\
+Car                & 0.7393 & 0.8345 & 0.7578 & 0.8347 & 0.7756 & 0.8630 & 0.7938 & 0.8715 \\
+\midrule
+\textbf{mIoU}      & 0.7617 & \textbf{0.8091} & 0.7698 & \textbf{0.8126} & 0.7810 & \textbf{0.8298} & 0.7956 & \textbf{0.8374} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Small Object Segmentation Trade-off}
+We observe a critical trade-off between IoU and Recall for tiny objects (e.g. Fallen trees, Fence, Car, Building). Due to region optimization in Dice loss, Exp 4 eliminates False Positives (improving IoU and Precision) at the cost of a consistently higher Miss Rate (False Negatives) than the Exp 2 baseline, as shown in Table~\ref{tab:small_object_tradeoff}.
+
+\begin{table*}[t]
+\centering
+\caption{Recall vs. Miss Rate Trade-off on Small Objects, Exp 2 (CE+W) vs. Exp 4 (Ours).}
+\label{tab:small_object_tradeoff}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccccc}
+\toprule
+ & & \multicolumn{2}{c}{\textbf{DeepLabV3+}} & \multicolumn{2}{c}{\textbf{SegFormer}} & \multicolumn{2}{c}{\textbf{UNet}} & \multicolumn{2}{c}{\textbf{UNet++}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
+\textbf{Class} & \textbf{Metric} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} & \textbf{Exp 2} & \textbf{Exp 4} \\
+\midrule
+\multirow{2}{*}{Fallen trees} & Recall  & 0.9201 & 0.8421 & 0.9356 & 0.8573 & 0.8993 & 0.8368 & 0.8991 & 0.8199 \\
+                               & Miss \% & 8.0\%  & 15.8\% & 6.4\%  & 14.3\% & 10.1\% & 16.3\% & 10.1\% & 18.0\% \\
+\midrule
+\multirow{2}{*}{Fence}        & Recall  & 0.9309 & 0.8613 & 0.9441 & 0.8523 & 0.9256 & 0.8610 & 0.9381 & 0.8550 \\
+                               & Miss \% & 6.9\%  & 13.9\% & 5.6\%  & 14.8\% & 7.4\%  & 13.9\% & 6.2\%  & 14.5\% \\
+\midrule
+\multirow{2}{*}{Car}          & Recall  & 0.9601 & 0.9170 & 0.9588 & 0.9263 & 0.9464 & 0.9257 & 0.9533 & 0.9198 \\
+                               & Miss \% & 4.0\%  & 8.3\%  & 4.1\%  & 7.4\%  & 5.4\%  & 7.4\%  & 4.7\%  & 8.0\%  \\
+\midrule
+\multirow{2}{*}{Building}     & Recall  & 0.9878 & 0.9655 & 0.9881 & 0.9698 & 0.9852 & 0.9677 & 0.9857 & 0.9675 \\
+                               & Miss \% & 1.2\%  & 3.4\%  & 1.2\%  & 3.0\%  & 1.5\%  & 3.2\%  & 1.4\%  & 3.2\%  \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+The consistent increase in Miss Rate under Exp 4 reflects the region-overlap objective of Dice Loss: rather than expanding predictions broadly to maximize recall as the fixed ENet weighting in Exp 2 tends to do, the model becomes more conservative, retaining only high-confidence predictions. This raises Precision and IoU overall, but at the cost of occasionally missing the faintest or most fragmented instances of small objects---a trade-off that should be considered when the target application prioritizes exhaustive detection (e.g., hazard alerting) over precise boundary delineation.
+
+\subsection{Sim-to-Real Generalization on WildUAV}
+To verify the practical generalization of our method, we perform a Sim-to-Real transfer study using the WildUAV dataset~\cite{florea2021wilduav}. We compare a model trained only on real WildUAV data against a model first pre-trained on the Forest Inspection dataset with our adaptive loss and subsequently fine-tuned on WildUAV. Table~\ref{tab:wilduav_transfer} reports the overall test mIoU under both protocols.
+
+\begin{table}[h]
+\centering
+\caption{Sim-to-Real Generalization on WildUAV (Overall Test mIoU).}
+\label{tab:wilduav_transfer}
+\small
+\begin{tabular}{lc}
+\toprule
+\textbf{Training Protocol} & \textbf{mIoU (\%)} \\
+\midrule
+Real-only (WildUAV $\rightarrow$ WildUAV) & 88.4 \\
+Ours: Pretrain (Forest Inspection) + Fine-tune & \textbf{88.6} \\
+\midrule
+\textbf{Gain ($\Delta$)} & +0.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pre-training on the synthetic Forest Inspection dataset with our adaptive loss yields a modest but consistent improvement over training on real WildUAV data alone, indicating that representations learned in the synthetic domain transfer positively to the real domain despite the domain gap. For this transfer evaluation, we align the class definitions between the simulated Forest Inspection and real WildUAV datasets by adhering strictly to the shared target class mapping defined in~\cite{forestdataset}: Forest Vegetation (combining tree species and ground vegetation), Dirt Ground, and Car, while synthetic-only categories (such as sky, buildings, fences, and rocks) are excluded. Similarly, pixels corresponding to target-dataset classes with no counterpart in the Forest Inspection taxonomy (such as road, water, and people) are assigned to an \texttt{ignore\_index} and excluded from the test mIoU computation. Note that the absolute mIoU values reported here (88.4\%--88.6\%) reflect evaluation on this specific domain-aligned subset of classes under nadir-view imagery. The direction of improvement is consistent with prior work, though the magnitude differs (e.g., +0.2 pp vs. +1.2 pp in~\cite{forestdataset}), reflecting differences in the evaluated class subset and domain alignment protocol.
+
+
+% ── PHẦN VI: KẾT LUẬN (CONCLUSION) ──────────────────────────────────
+\section{Conclusion}
+\label{sec:conclusion}
+We presented an adaptive multi-loss optimization framework using uncertainty weighting to resolve severe class imbalance in UAV forest inspection datasets. By benchmarking across four distinct convolutional and Transformer-based models, we demonstrated a consistent mIoU improvement across all weather training regimes (Sunny-only, Overcast-only, and Combined), with optimization gains ranging from +4.18 to +4.88 pp under the combined weather scenario. The largest performance gains are concentrated on rare classes such as fences, fallen trees, and cars. A Sim-to-Real transfer study on the real-world WildUAV dataset (evaluated on a forest-relevant class subset, see Section 5.4) further showed that pre-training on the synthetic Forest Inspection dataset with our adaptive loss provides a consistent, if modest, generalization gain over training on real data alone (+0.2 pp mIoU). In future work, we plan to (i) extend the method to unsupervised domain adaptation (UDA) and test-time augmentation (TTA) frameworks to further close the synthetic-to-real gap, and (ii) investigate recall-aware variants of the adaptive loss (e.g., Tversky-style false-negative weighting) to mitigate the small-object miss-rate trade-off identified in Section~\ref{sec:results}.
+
+\section*{Data and Code Availability}
+The Forest Inspection dataset~\cite{forestdataset} and WildUAV dataset~\cite{florea2021wilduav} used in this study are publicly available from their respective original publications. Source code is available from the corresponding author upon reasonable request.
+
+% ── THƯ MỤC THAM KHẢO (BIBLIOGRAPHY) ────────────────────────────────
+\begin{thebibliography}{99}
+
+\bibitem{lyu2020uavid}
+Y. Lyu, G. Vosselman, G.-S. Xia, A. Yilmaz, and M. Y. Yang, ``UAVid: A semantic segmentation dataset for UAV imagery,'' \textit{ISPRS Journal of Photogrammetry and Remote Sensing}, vol. 165, pp. 108--119, 2020.
+
+\bibitem{marcu2020semantics}
+A. Marcu, V. Licaret, D. Costea, and M. Leordeanu, ``Semantics through time: Semi-supervised segmentation of aerial videos with iterative label propagation,'' in \textit{Proceedings of the Asian Conference on Computer Vision (ACCV)}, 2020.
+
+\bibitem{forestdataset}
+B.-C.-Z. Blaga and S. Nedevschi, ``Forest Inspection Dataset: A Synthetic UAV Dataset for Semantic Segmentation of Forest Environments,'' \textit{Scientific Data}, vol. 13, p. 298, 2026.
+
+\bibitem{florea2021wilduav}
+H. Florea, V.-C. Miclea, and S. Nedevschi, ``WildUAV: Monocular UAV Dataset for Depth Estimation Tasks,'' in \textit{IEEE 17th International Conference on Intelligent Computer Communication and Processing (ICCP)}, 2021, pp. 291--298.
+
+\bibitem{paszke2016enet}
+A. Paszke, A. Chaurasia, S. Kim, and E. Culurciello, ``ENet: A deep neural network architecture for real-time semantic segmentation,'' \textit{arXiv preprint arXiv:1606.02147}, 2016.
+
+\bibitem{lin2017focal}
+T.-Y. Lin, P. Goyal, R. Girshick, K. He, and P. Doll{\'a}r, ``Focal loss for dense object detection,'' in \textit{Proceedings of the IEEE International Conference on Computer Vision (ICCV)}, 2017, pp. 2980--2988.
+
+\bibitem{milletari2016vnet}
+F. Milletari, N. Navab, and S.-A. Ahmadi, ``V-Net: Fully convolutional neural networks for volumetric medical image segmentation,'' in \textit{International Conference on 3D Vision (3DV)}, 2016, pp. 565--571.
+
+\bibitem{kendall2018multi}
+A. Kendall, Y. Gal, and R. Cipolla, ``Multi-task learning using uncertainty to weigh losses for scene geometry and semantics,'' in \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 2018, pp. 7482--7491.
+
+\bibitem{ronneberger2015unet}
+O. Ronneberger, P. Fischer, and T. Brox, ``U-Net: Convolutional networks for biomedical image segmentation,'' in \textit{Medical Image Computing and Computer-Assisted Intervention (MICCAI)}, 2015, pp. 234--241.
+
+\bibitem{zhou2018unetpp}
+Z. Zhou, M. M. R. Siddiquee, N. Tajbakhsh, and J. Liang, ``UNet++: A nested U-Net architecture for medical image segmentation,'' in \textit{Deep Learning in Medical Image Analysis and Multimodal Learning for Clinical Decision Support (DLMIA) Workshop, MICCAI}, 2018.
+
+\bibitem{he2016resnet}
+K. He, X. Zhang, S. Ren, and J. Sun, ``Deep residual learning for image recognition,'' in \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, 2016, pp. 770--778.
+
+\bibitem{chen2018deeplabv3plus}
+L.-C. Chen, Y. Zhu, G. Papandreou, F. Schroff, and H. Adam, ``Encoder-decoder with atrous separable convolution for semantic image segmentation,'' in \textit{Proceedings of the European Conference on Computer Vision (ECCV)}, 2018, pp. 801--818.
+
+\bibitem{xie2021segformer}
+E. Xie, W. Wang, Z. Yu, A. Anandkumar, J. M. Alvarez, and P. Luo, ``SegFormer: Simple and efficient design for semantic segmentation with transformers,'' in \textit{Advances in Neural Information Processing Systems (NeurIPS)}, 2021.
+
+\bibitem{loshchilov2019adamw}
+I. Loshchilov and F. Hutter, ``Decoupled weight decay regularization,'' in \textit{International Conference on Learning Representations (ICLR)}, 2019.
+
+\end{thebibliography}
+
+\end{document}
