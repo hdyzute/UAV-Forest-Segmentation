@@ -733,6 +733,41 @@ else:
     plt.show()
 '''))
 
+CELLS.append(('code', r'''# ============================================================
+# DOWNLOAD — zip logs/results/figures, copy checkpoints, and show download links.
+# Runs last, so it also works after a [TIME LIMIT] stop (then it packs last.pth for resuming).
+# ============================================================
+import os, shutil, zipfile
+
+WORK_DIR = OUTPUT_DIR.parent                     # /kaggle/working on Kaggle
+pack_dir = WORK_DIR / 'download'; pack_dir.mkdir(parents=True, exist_ok=True)
+
+# 1) small files: training_log.csv, status.json, results JSON, analysis figures
+small_zip = pack_dir / f'{RUN_NAME}_logs.zip'
+with zipfile.ZipFile(small_zip, 'w', zipfile.ZIP_DEFLATED) as z:
+    for p in OUTPUT_DIR.glob('*'):
+        if p.is_file():
+            z.write(p, arcname=p.name)
+print(f'{small_zip.name}: {small_zip.stat().st_size / 1e6:.1f} MB')
+
+# 2) checkpoints: best.pth (model only) and last.pth (model + optimizer, needed to RESUME)
+#    .pth is already compressed, so it is copied as is. The RESUME cell accepts the RUN_NAME prefix.
+for name in ['best.pth', 'last.pth']:
+    src = CKPT_DIR / name
+    if src.exists():
+        dst = pack_dir / f'{RUN_NAME}_{name}'
+        shutil.copy(src, dst)
+        print(f'{dst.name}: {dst.stat().st_size / 1e6:.0f} MB')
+
+os.chdir(WORK_DIR)                               # FileLink needs a path relative to /kaggle/working
+try:
+    from IPython.display import FileLink, display
+    for p in sorted(pack_dir.glob('*')):
+        display(FileLink(str(p.relative_to(WORK_DIR))))
+except ImportError:
+    print('\n'.join(str(p) for p in sorted(pack_dir.glob('*'))))
+'''))
+
 # ---------------------------------------------------------------- build
 def nb_json(cells):
     out = []

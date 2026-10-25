@@ -11,6 +11,8 @@ MA-Net runs **without AMP**; DeepLabV3+ and UNet++ CE+Dice use patience 15, all 
 2. **Save Version → Save & Run All**. Each run needs about 20 h = 2 sessions.
 3. Session 1 stops by itself after ~11 h with `[TIME LIMIT]` (`last.pth` is saved).
    Add that version's output as an input dataset, put its folder in `RESUME_DIR` (CONFIG cell), Save & Run All again.
+   In an interactive session, the last cell (DOWNLOAD) shows download links for `<RUN>_logs.zip`,
+   `<RUN>_best.pth` and `<RUN>_last.pth`; upload these as a dataset to resume (the RUN_NAME prefix is accepted).
 4. When `TRAINING_FINISHED = True`, the test cell writes `outputs/results_<RUN>.json`.
    Download into `results/` here: `results_<RUN>.json`, `training_log.csv` (rename to `<RUN>_training_log.csv`),
    and keep `checkpoints/best.pth` on Kaggle (needed for the qualitative figure).
