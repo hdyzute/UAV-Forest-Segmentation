@@ -1,0 +1,470 @@
+[
+ {
+  "run_name": "legacy_deeplabv3plus_ce_s123",
+  "model": "deeplabv3plus",
+  "loss": "ce",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7617,
+   "iou": {
+    "Sky": 0.9911,
+    "Deciduous_trees": 0.7264,
+    "Coniferous_trees": 0.8079000000000001,
+    "Fallen_trees": 0.5094,
+    "Dirt_ground": 0.8365,
+    "Ground_vegetation": 0.8466,
+    "Rocks": 0.7751,
+    "Building": 0.8489,
+    "Fence": 0.5355,
+    "Car": 0.7393000000000001
+   },
+   "recall": {
+    "Fallen_trees": 0.9201,
+    "Fence": 0.9309,
+    "Car": 0.9601,
+    "Building": 0.9878
+   },
+   "precision": {
+    "Fallen_trees": 0.533,
+    "Fence": 0.5577,
+    "Car": 0.7628,
+    "Building": 0.858
+   }
+  }
+ },
+ {
+  "run_name": "legacy_deeplabv3plus_ced_s123",
+  "model": "deeplabv3plus",
+  "loss": "ced",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8038,
+   "iou": {
+    "Sky": 0.9913,
+    "Deciduous_trees": 0.7252,
+    "Coniferous_trees": 0.8091,
+    "Fallen_trees": 0.594,
+    "Dirt_ground": 0.8655,
+    "Ground_vegetation": 0.8498,
+    "Rocks": 0.826,
+    "Building": 0.9053,
+    "Fence": 0.6376,
+    "Car": 0.8341
+   }
+  }
+ },
+ {
+  "run_name": "legacy_deeplabv3plus_cef_s123",
+  "model": "deeplabv3plus",
+  "loss": "cef",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7835,
+   "iou": {
+    "Sky": 0.9914,
+    "Deciduous_trees": 0.7328,
+    "Coniferous_trees": 0.8147,
+    "Fallen_trees": 0.5622,
+    "Dirt_ground": 0.8599,
+    "Ground_vegetation": 0.854,
+    "Rocks": 0.812,
+    "Building": 0.8718,
+    "Fence": 0.5648,
+    "Car": 0.7711
+   }
+  }
+ },
+ {
+  "run_name": "legacy_segformer_ce_s123",
+  "model": "segformer",
+  "loss": "ce",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7698,
+   "iou": {
+    "Sky": 0.9912000000000001,
+    "Deciduous_trees": 0.7331,
+    "Coniferous_trees": 0.8145,
+    "Fallen_trees": 0.512,
+    "Dirt_ground": 0.8384,
+    "Ground_vegetation": 0.8488,
+    "Rocks": 0.7847,
+    "Building": 0.8606999999999999,
+    "Fence": 0.5564,
+    "Car": 0.7578
+   },
+   "recall": {
+    "Fallen_trees": 0.9356,
+    "Fence": 0.9441,
+    "Car": 0.9588,
+    "Building": 0.9881
+   },
+   "precision": {
+    "Fallen_trees": 0.5307,
+    "Fence": 0.5753,
+    "Car": 0.7833,
+    "Building": 0.8698
+   }
+  }
+ },
+ {
+  "run_name": "legacy_segformer_ced_s123",
+  "model": "segformer",
+  "loss": "ced",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8133,
+   "iou": {
+    "Sky": 0.9913,
+    "Deciduous_trees": 0.7356,
+    "Coniferous_trees": 0.8167,
+    "Fallen_trees": 0.6287,
+    "Dirt_ground": 0.8672,
+    "Ground_vegetation": 0.8566,
+    "Rocks": 0.8224,
+    "Building": 0.9084,
+    "Fence": 0.6611,
+    "Car": 0.8447
+   }
+  }
+ },
+ {
+  "run_name": "legacy_segformer_cef_s123",
+  "model": "segformer",
+  "loss": "cef",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7823,
+   "iou": {
+    "Sky": 0.9912,
+    "Deciduous_trees": 0.7377,
+    "Coniferous_trees": 0.818,
+    "Fallen_trees": 0.5599,
+    "Dirt_ground": 0.8549,
+    "Ground_vegetation": 0.8559,
+    "Rocks": 0.8085,
+    "Building": 0.8713,
+    "Fence": 0.5627,
+    "Car": 0.7627
+   }
+  }
+ },
+ {
+  "run_name": "legacy_upernet_ce_s123",
+  "model": "upernet",
+  "loss": "ce",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7836,
+   "iou": {
+    "Sky": 0.991,
+    "Deciduous_trees": 0.7395999999999999,
+    "Coniferous_trees": 0.8197,
+    "Fallen_trees": 0.5335,
+    "Dirt_ground": 0.8452,
+    "Ground_vegetation": 0.8545,
+    "Rocks": 0.802,
+    "Building": 0.872,
+    "Fence": 0.589,
+    "Car": 0.7894
+   },
+   "recall": {
+    "Fallen_trees": 0.9432,
+    "Fence": 0.9439,
+    "Car": 0.957,
+    "Building": 0.9878
+   },
+   "precision": {
+    "Fallen_trees": 0.5512,
+    "Fence": 0.6104,
+    "Car": 0.8184,
+    "Building": 0.8815
+   }
+  }
+ },
+ {
+  "run_name": "legacy_upernet_ced_s123",
+  "model": "upernet",
+  "loss": "ced",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8176000000000001,
+   "iou": {
+    "Sky": 0.9914,
+    "Deciduous_trees": 0.7388,
+    "Coniferous_trees": 0.8203,
+    "Fallen_trees": 0.6358,
+    "Dirt_ground": 0.872,
+    "Ground_vegetation": 0.8584,
+    "Rocks": 0.8326,
+    "Building": 0.911,
+    "Fence": 0.6668,
+    "Car": 0.8491
+   }
+  }
+ },
+ {
+  "run_name": "legacy_upernet_cef_s123",
+  "model": "upernet",
+  "loss": "cef",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7948000000000001,
+   "iou": {
+    "Sky": 0.9916,
+    "Deciduous_trees": 0.7439,
+    "Coniferous_trees": 0.8228,
+    "Fallen_trees": 0.5823,
+    "Dirt_ground": 0.8658,
+    "Ground_vegetation": 0.8612,
+    "Rocks": 0.8226,
+    "Building": 0.8812,
+    "Fence": 0.583,
+    "Car": 0.794
+   }
+  }
+ },
+ {
+  "run_name": "legacy_unet_ce_s123",
+  "model": "unet",
+  "loss": "ce",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7809999999999999,
+   "iou": {
+    "Sky": 0.9976,
+    "Deciduous_trees": 0.7419,
+    "Coniferous_trees": 0.8243,
+    "Fallen_trees": 0.5395,
+    "Dirt_ground": 0.8476,
+    "Ground_vegetation": 0.8592,
+    "Rocks": 0.8149,
+    "Building": 0.8654999999999999,
+    "Fence": 0.5435,
+    "Car": 0.7756000000000001
+   },
+   "recall": {
+    "Fallen_trees": 0.8993,
+    "Fence": 0.9256,
+    "Car": 0.9464,
+    "Building": 0.9852
+   },
+   "precision": {
+    "Fallen_trees": 0.5742,
+    "Fence": 0.5684,
+    "Car": 0.8113,
+    "Building": 0.8769
+   }
+  }
+ },
+ {
+  "run_name": "legacy_unet_ced_s123",
+  "model": "unet",
+  "loss": "ced",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8259000000000001,
+   "iou": {
+    "Sky": 0.997,
+    "Deciduous_trees": 0.7361,
+    "Coniferous_trees": 0.8246,
+    "Fallen_trees": 0.6362,
+    "Dirt_ground": 0.8714,
+    "Ground_vegetation": 0.8611,
+    "Rocks": 0.8456,
+    "Building": 0.9194,
+    "Fence": 0.7004,
+    "Car": 0.8671
+   }
+  }
+ },
+ {
+  "run_name": "legacy_unet_cef_s123",
+  "model": "unet",
+  "loss": "cef",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7886,
+   "iou": {
+    "Sky": 0.9972,
+    "Deciduous_trees": 0.7335,
+    "Coniferous_trees": 0.8239,
+    "Fallen_trees": 0.5767,
+    "Dirt_ground": 0.8601,
+    "Ground_vegetation": 0.8597,
+    "Rocks": 0.8237,
+    "Building": 0.8734,
+    "Fence": 0.5632,
+    "Car": 0.7743
+   }
+  }
+ },
+ {
+  "run_name": "legacy_manet_ce_s123",
+  "model": "manet",
+  "loss": "ce",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7959,
+   "iou": {
+    "Sky": 0.9984999999999999,
+    "Deciduous_trees": 0.7592,
+    "Coniferous_trees": 0.8428,
+    "Fallen_trees": 0.5805,
+    "Dirt_ground": 0.8583,
+    "Ground_vegetation": 0.8731,
+    "Rocks": 0.8339,
+    "Building": 0.8692,
+    "Fence": 0.5664,
+    "Car": 0.7770999999999999
+   },
+   "recall": {
+    "Fallen_trees": 0.9276,
+    "Fence": 0.9392,
+    "Car": 0.9596,
+    "Building": 0.9879
+   },
+   "precision": {
+    "Fallen_trees": 0.6081,
+    "Fence": 0.588,
+    "Car": 0.8033,
+    "Building": 0.8785
+   }
+  }
+ },
+ {
+  "run_name": "legacy_manet_ced_s123",
+  "model": "manet",
+  "loss": "ced",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8382999999999999,
+   "iou": {
+    "Sky": 0.9979,
+    "Deciduous_trees": 0.7498,
+    "Coniferous_trees": 0.835,
+    "Fallen_trees": 0.6812,
+    "Dirt_ground": 0.8809,
+    "Ground_vegetation": 0.8714,
+    "Rocks": 0.8617,
+    "Building": 0.9177,
+    "Fence": 0.7116,
+    "Car": 0.8758
+   }
+  }
+ },
+ {
+  "run_name": "legacy_manet_cef_s123",
+  "model": "manet",
+  "loss": "cef",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8112999999999999,
+   "iou": {
+    "Sky": 0.9985,
+    "Deciduous_trees": 0.761,
+    "Coniferous_trees": 0.8452,
+    "Fallen_trees": 0.6238,
+    "Dirt_ground": 0.8715,
+    "Ground_vegetation": 0.8772,
+    "Rocks": 0.8521,
+    "Building": 0.8895,
+    "Fence": 0.587,
+    "Car": 0.8069
+   }
+  }
+ },
+ {
+  "run_name": "legacy_unetpp_ce_s123",
+  "model": "unetpp",
+  "loss": "ce",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.7954000000000001,
+   "iou": {
+    "Sky": 0.9986,
+    "Deciduous_trees": 0.757,
+    "Coniferous_trees": 0.8306,
+    "Fallen_trees": 0.5848,
+    "Dirt_ground": 0.8584,
+    "Ground_vegetation": 0.8658,
+    "Rocks": 0.8294,
+    "Building": 0.8778,
+    "Fence": 0.5581,
+    "Car": 0.7938
+   },
+   "recall": {
+    "Fallen_trees": 0.8991,
+    "Fence": 0.9381,
+    "Car": 0.9533,
+    "Building": 0.9857
+   },
+   "precision": {
+    "Fallen_trees": 0.6259,
+    "Fence": 0.5795,
+    "Car": 0.826,
+    "Building": 0.8891
+   }
+  }
+ },
+ {
+  "run_name": "legacy_unetpp_ced_s123",
+  "model": "unetpp",
+  "loss": "ced",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8398,
+   "iou": {
+    "Sky": 0.9976,
+    "Deciduous_trees": 0.7506,
+    "Coniferous_trees": 0.8271,
+    "Fallen_trees": 0.6776,
+    "Dirt_ground": 0.8777,
+    "Ground_vegetation": 0.8657,
+    "Rocks": 0.8637,
+    "Building": 0.9296,
+    "Fence": 0.7216,
+    "Car": 0.8864
+   }
+  }
+ },
+ {
+  "run_name": "legacy_unetpp_cef_s123",
+  "model": "unetpp",
+  "loss": "cef",
+  "seed": 123,
+  "source": "legacy",
+  "test": {
+   "miou": 0.8201999999999999,
+   "iou": {
+    "Sky": 0.998,
+    "Deciduous_trees": 0.7588,
+    "Coniferous_trees": 0.8394,
+    "Fallen_trees": 0.6437,
+    "Dirt_ground": 0.8756,
+    "Ground_vegetation": 0.8732,
+    "Rocks": 0.8547,
+    "Building": 0.9051,
+    "Fence": 0.6194,
+    "Car": 0.8342
+   }
+  }
+ }
+]
