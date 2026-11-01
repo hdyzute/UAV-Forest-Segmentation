@@ -1,0 +1,49 @@
+{
+  "run_name": "R25_unetpp_famo_s123",
+  "model": "unetpp",
+  "encoder": "resnet50",
+  "loss": "famo",
+  "seed": 123,
+  "use_amp": true,
+  "weight_decay": 0.0001,
+  "source": "parsed from notebook output",
+  "test": {
+    "miou": 0.8529,
+    "iou": {
+      "Sky": 0.9987,
+      "Deciduous_trees": 0.7644,
+      "Coniferous_trees": 0.8463,
+      "Fallen_trees": 0.7073,
+      "Dirt_ground": 0.8931,
+      "Ground_vegetation": 0.8803,
+      "Rocks": 0.8812,
+      "Building": 0.9338,
+      "Fence": 0.7343,
+      "Car": 0.8897
+    },
+    "recall": {
+      "Sky": 0.9994,
+      "Deciduous_trees": 0.8837,
+      "Coniferous_trees": 0.9295,
+      "Fallen_trees": 0.8488,
+      "Dirt_ground": 0.9518,
+      "Ground_vegetation": 0.9188,
+      "Rocks": 0.9444,
+      "Building": 0.9696,
+      "Fence": 0.8733,
+      "Car": 0.9376
+    },
+    "precision": {
+      "Sky": 0.9993,
+      "Deciduous_trees": 0.8499,
+      "Coniferous_trees": 0.9044,
+      "Fallen_trees": 0.8092,
+      "Dirt_ground": 0.9354,
+      "Ground_vegetation": 0.9547,
+      "Rocks": 0.9294,
+      "Building": 0.9619,
+      "Fence": 0.8219,
+      "Car": 0.9457
+    }
+  }
+}

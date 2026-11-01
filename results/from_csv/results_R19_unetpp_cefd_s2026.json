@@ -1,0 +1,36 @@
+{
+  "run_name": "R19_unetpp_cefd_s2026",
+  "model": "unetpp",
+  "loss": "cefd",
+  "seed": 2026,
+  "source": "kbs_done/r17-r24_test_metrics.csv",
+  "best_epoch": 48,
+  "best_val_miou": 0.8346,
+  "test": {
+    "miou": 0.8468,
+    "iou": {
+      "Sky": 0.9985,
+      "Deciduous_trees": 0.7589,
+      "Coniferous_trees": 0.8408,
+      "Fallen_trees": 0.6893,
+      "Dirt_ground": 0.8902,
+      "Ground_vegetation": 0.8767,
+      "Rocks": 0.8722,
+      "Building": 0.9309,
+      "Fence": 0.7239,
+      "Car": 0.8871
+    },
+    "recall": {
+      "Fallen_trees": 0.8601,
+      "Building": 0.9732,
+      "Fence": 0.8783,
+      "Car": 0.9404
+    },
+    "precision": {
+      "Fallen_trees": 0.7763,
+      "Building": 0.9554,
+      "Fence": 0.8046,
+      "Car": 0.9399
+    }
+  }
+}

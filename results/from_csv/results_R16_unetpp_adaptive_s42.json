@@ -1,0 +1,36 @@
+{
+  "run_name": "R16_unetpp_adaptive_s42",
+  "model": "unetpp",
+  "loss": "adaptive",
+  "seed": 42,
+  "source": "kbs_done/r07-r16_test_metrics.csv",
+  "best_epoch": 47,
+  "best_val_miou": 0.8364,
+  "test": {
+    "miou": 0.8479,
+    "iou": {
+      "Sky": 0.9985,
+      "Deciduous_trees": 0.7613,
+      "Coniferous_trees": 0.8395,
+      "Fallen_trees": 0.7016,
+      "Dirt_ground": 0.8839,
+      "Ground_vegetation": 0.8758,
+      "Rocks": 0.8773,
+      "Building": 0.9311,
+      "Fence": 0.7238,
+      "Car": 0.8864
+    },
+    "recall": {
+      "Fallen_trees": 0.8439,
+      "Building": 0.9709,
+      "Fence": 0.8564,
+      "Car": 0.9381
+    },
+    "precision": {
+      "Fallen_trees": 0.8063,
+      "Building": 0.9579,
+      "Fence": 0.8237,
+      "Car": 0.9415
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "run_name": "R21_manet_cefd_s42",
+  "model": "manet",
+  "encoder": "resnet50",
+  "loss": "cefd",
+  "seed": 42,
+  "use_amp": false,
+  "weight_decay": 0.0001,
+  "source": "parsed from notebook output",
+  "test": {
+    "miou": 0.8265,
+    "iou": {
+      "Sky": 0.9971,
+      "Deciduous_trees": 0.7404,
+      "Coniferous_trees": 0.8269,
+      "Fallen_trees": 0.6472,
+      "Dirt_ground": 0.8909,
+      "Ground_vegetation": 0.8656,
+      "Rocks": 0.8497,
+      "Building": 0.9143,
+      "Fence": 0.6779,
+      "Car": 0.8545
+    },
+    "recall": {
+      "Sky": 0.9986,
+      "Deciduous_trees": 0.8765,
+      "Coniferous_trees": 0.9156,
+      "Fallen_trees": 0.8439,
+      "Dirt_ground": 0.9679,
+      "Ground_vegetation": 0.9057,
+      "Rocks": 0.9384,
+      "Building": 0.969,
+      "Fence": 0.8696,
+      "Car": 0.9293
+    },
+    "precision": {
+      "Sky": 0.9985,
+      "Deciduous_trees": 0.8266,
+      "Coniferous_trees": 0.8951,
+      "Fallen_trees": 0.7352,
+      "Dirt_ground": 0.9181,
+      "Ground_vegetation": 0.9513,
+      "Rocks": 0.9,
+      "Building": 0.9418,
+      "Fence": 0.7547,
+      "Car": 0.9139
+    }
+  },
+  "best_val_miou": 0.8146,
+  "best_epoch": 45
+}

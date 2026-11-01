@@ -1,0 +1,36 @@
+{
+  "run_name": "R08_manet_cefd_s123",
+  "model": "manet",
+  "loss": "cefd",
+  "seed": 123,
+  "source": "kbs_done/r07-r16_test_metrics.csv",
+  "best_epoch": 43,
+  "best_val_miou": 0.8113,
+  "test": {
+    "miou": 0.8231,
+    "iou": {
+      "Sky": 0.9968,
+      "Deciduous_trees": 0.7397,
+      "Coniferous_trees": 0.8258,
+      "Fallen_trees": 0.63,
+      "Dirt_ground": 0.8905,
+      "Ground_vegetation": 0.8647,
+      "Rocks": 0.8486,
+      "Building": 0.9113,
+      "Fence": 0.673,
+      "Car": 0.8504
+    },
+    "recall": {
+      "Fallen_trees": 0.8421,
+      "Building": 0.9701,
+      "Fence": 0.8642,
+      "Car": 0.933
+    },
+    "precision": {
+      "Fallen_trees": 0.7145,
+      "Building": 0.9376,
+      "Fence": 0.7526,
+      "Car": 0.9057
+    }
+  }
+}

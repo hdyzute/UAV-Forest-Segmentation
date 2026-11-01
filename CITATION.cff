@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "Revisiting Compound Losses for Class-Imbalanced UAV Forest Segmentation: code and results"
+type: software
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/hdyzute/UAV-Forest-Segmentation"
+authors:
+  - family-names: Pham
+    given-names: Hoang-Dung
+    affiliation: "University of Science, Vietnam National University, Ho Chi Minh City"
+  - family-names: Pham Le
+    given-names: Hong-Hien
+    affiliation: "University of Science, Vietnam National University, Ho Chi Minh City"
+  - family-names: Huynh
+    given-names: Thanh-Son
+    affiliation: "University of Science, Vietnam National University, Ho Chi Minh City"
+    orcid: "https://orcid.org/0009-0005-9222-8874"
+keywords:
+  - semantic segmentation
+  - UAV forest inspection
+  - class imbalance
+  - compound loss
+  - uncertainty weighting

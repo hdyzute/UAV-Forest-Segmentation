@@ -1,0 +1,46 @@
+{
+  "run_name": "WU_unetpp_adaptive_s2026",
+  "dataset": "wilduav",
+  "model": "unetpp",
+  "loss": "adaptive",
+  "seed": 2026,
+  "source": "parsed from WU3_wilduav_s2026.ipynb",
+  "epochs": 50,
+  "evaluated": "final model on val.txt",
+  "test": {
+    "miou": 0.8782,
+    "iou": {
+      "Ground_vegetation": 0.9549,
+      "Trees": 0.9147,
+      "Dirt_ground": 0.8568,
+      "Road": 0.9523,
+      "Water": 0.9599,
+      "Empty": 0.8234,
+      "Static_car": 0.9274,
+      "Moving_car": 0.7528,
+      "People": 0.7614
+    },
+    "recall": {
+      "Ground_vegetation": 0.9745,
+      "Trees": 0.9541,
+      "Dirt_ground": 0.9688,
+      "Road": 0.986,
+      "Water": 0.9903,
+      "Empty": 0.8963,
+      "Static_car": 0.9739,
+      "Moving_car": 0.8768,
+      "People": 0.9105
+    },
+    "precision": {
+      "Ground_vegetation": 0.9794,
+      "Trees": 0.9568,
+      "Dirt_ground": 0.8812,
+      "Road": 0.9654,
+      "Water": 0.9691,
+      "Empty": 0.9101,
+      "Static_car": 0.9511,
+      "Moving_car": 0.8418,
+      "People": 0.8229
+    }
+  }
+}

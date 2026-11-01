@@ -1,0 +1,12 @@
+{
+  "title": "Revisiting Compound Losses for Class-Imbalanced UAV Forest Segmentation: code and results",
+  "upload_type": "software",
+  "description": "Run notebooks, loss implementations, and test results for the study of Dice, focal, and learned loss weighting on the Forest Inspection and WildUAV benchmarks (six architectures, alternative losses and loss balancing on UNet++, operating-point study).",
+  "creators": [
+    {"name": "Pham, Hoang-Dung", "affiliation": "University of Science, Vietnam National University, Ho Chi Minh City"},
+    {"name": "Pham Le, Hong-Hien", "affiliation": "University of Science, Vietnam National University, Ho Chi Minh City"},
+    {"name": "Huynh, Thanh-Son", "affiliation": "University of Science, Vietnam National University, Ho Chi Minh City", "orcid": "0009-0005-9222-8874"}
+  ],
+  "license": "MIT",
+  "keywords": ["semantic segmentation", "UAV forest inspection", "class imbalance", "compound loss", "uncertainty weighting"]
+}

@@ -1,0 +1,36 @@
+{
+  "run_name": "R17_unetpp_ce_s2026",
+  "model": "unetpp",
+  "loss": "ce",
+  "seed": 2026,
+  "source": "kbs_done/r17-r24_test_metrics.csv",
+  "best_epoch": 16,
+  "best_val_miou": 0.77,
+  "test": {
+    "miou": 0.7802,
+    "iou": {
+      "Sky": 0.997,
+      "Deciduous_trees": 0.7349,
+      "Coniferous_trees": 0.814,
+      "Fallen_trees": 0.546,
+      "Dirt_ground": 0.857,
+      "Ground_vegetation": 0.859,
+      "Rocks": 0.8265,
+      "Building": 0.8525,
+      "Fence": 0.5435,
+      "Car": 0.7715
+    },
+    "recall": {
+      "Fallen_trees": 0.8973,
+      "Building": 0.9818,
+      "Fence": 0.8886,
+      "Car": 0.9464
+    },
+    "precision": {
+      "Fallen_trees": 0.5824,
+      "Building": 0.8662,
+      "Fence": 0.5832,
+      "Car": 0.8067
+    }
+  }
+}

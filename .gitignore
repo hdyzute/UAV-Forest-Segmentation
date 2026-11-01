@@ -1,38 +1,6 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
-
-# Model weights and large checkpoint files (>100MB)
+*.pyc
 *.pth
-*.pt
-*.ckpt
-*.h5
-*.bin
-*.onnx
-
-# Compressed archives and checkpoints
-*.zip
-*.tar
-*.gz
-*.7z
-*.rar
-
-# Jupyter Notebook Checkpoints
+outputs/
+out/
 .ipynb_checkpoints/
-
-# Antigravity temporary scratch files
-scratch/
-.tempmediaStorage/
-
-# OS / Editor generated files
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.vscode/
-.idea/
-
-# Internal thesis and edit checklist files (not pushed to public GitHub)
-UAV/
-danh_sach_loi_can_sua.md

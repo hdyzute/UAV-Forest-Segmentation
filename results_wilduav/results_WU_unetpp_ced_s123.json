@@ -1,0 +1,46 @@
+{
+  "run_name": "WU_unetpp_ced_s123",
+  "dataset": "wilduav",
+  "model": "unetpp",
+  "loss": "ced",
+  "seed": 123,
+  "source": "parsed from wu1-wilduav-s123.ipynb",
+  "epochs": 50,
+  "evaluated": "final model on val.txt",
+  "test": {
+    "miou": 0.8939,
+    "iou": {
+      "Ground_vegetation": 0.9549,
+      "Trees": 0.9146,
+      "Dirt_ground": 0.8559,
+      "Road": 0.9497,
+      "Water": 0.9571,
+      "Empty": 0.8443,
+      "Static_car": 0.9357,
+      "Moving_car": 0.8613,
+      "People": 0.7716
+    },
+    "recall": {
+      "Ground_vegetation": 0.9752,
+      "Trees": 0.9525,
+      "Dirt_ground": 0.9664,
+      "Road": 0.9855,
+      "Water": 0.9886,
+      "Empty": 0.92,
+      "Static_car": 0.9693,
+      "Moving_car": 0.9107,
+      "People": 0.899
+    },
+    "precision": {
+      "Ground_vegetation": 0.9786,
+      "Trees": 0.9583,
+      "Dirt_ground": 0.8821,
+      "Road": 0.9631,
+      "Water": 0.9678,
+      "Empty": 0.9112,
+      "Static_car": 0.9642,
+      "Moving_car": 0.9408,
+      "People": 0.8448
+    }
+  }
+}

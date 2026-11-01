@@ -1,0 +1,51 @@
+{
+  "run_name": "R04_segformer_adaptive_s123",
+  "model": "segformer",
+  "encoder": "mit_b4",
+  "loss": "adaptive",
+  "seed": 123,
+  "use_amp": true,
+  "weight_decay": 0.0001,
+  "source": "parsed from notebook output",
+  "test": {
+    "miou": 0.8229,
+    "iou": {
+      "Sky": 0.9914,
+      "Deciduous_trees": 0.7431,
+      "Coniferous_trees": 0.8236,
+      "Fallen_trees": 0.6438,
+      "Dirt_ground": 0.8816,
+      "Ground_vegetation": 0.8627,
+      "Rocks": 0.8441,
+      "Building": 0.9149,
+      "Fence": 0.6729,
+      "Car": 0.851
+    },
+    "recall": {
+      "Sky": 0.9952,
+      "Deciduous_trees": 0.8748,
+      "Coniferous_trees": 0.9212,
+      "Fallen_trees": 0.872,
+      "Dirt_ground": 0.9668,
+      "Ground_vegetation": 0.8997,
+      "Rocks": 0.9441,
+      "Building": 0.9719,
+      "Fence": 0.9007,
+      "Car": 0.9334
+    },
+    "precision": {
+      "Sky": 0.9962,
+      "Deciduous_trees": 0.8315,
+      "Coniferous_trees": 0.8861,
+      "Fallen_trees": 0.7111,
+      "Dirt_ground": 0.909,
+      "Ground_vegetation": 0.9545,
+      "Rocks": 0.8885,
+      "Building": 0.9398,
+      "Fence": 0.7269,
+      "Car": 0.9061
+    }
+  },
+  "best_val_miou": 0.8127,
+  "best_epoch": 46
+}

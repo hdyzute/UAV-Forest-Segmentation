@@ -1,0 +1,51 @@
+{
+  "run_name": "R11_unetpp_unified_focal_s123",
+  "model": "unetpp",
+  "encoder": "resnet50",
+  "loss": "unified_focal",
+  "seed": 123,
+  "use_amp": true,
+  "weight_decay": 0.0001,
+  "source": "parsed from notebook output",
+  "test": {
+    "miou": 0.8546,
+    "iou": {
+      "Sky": 0.999,
+      "Deciduous_trees": 0.7597,
+      "Coniferous_trees": 0.8443,
+      "Fallen_trees": 0.7104,
+      "Dirt_ground": 0.9059,
+      "Ground_vegetation": 0.8807,
+      "Rocks": 0.8853,
+      "Building": 0.935,
+      "Fence": 0.7317,
+      "Car": 0.8941
+    },
+    "recall": {
+      "Sky": 0.9997,
+      "Deciduous_trees": 0.8674,
+      "Coniferous_trees": 0.9324,
+      "Fallen_trees": 0.8181,
+      "Dirt_ground": 0.9508,
+      "Ground_vegetation": 0.9239,
+      "Rocks": 0.9314,
+      "Building": 0.9718,
+      "Fence": 0.8713,
+      "Car": 0.947
+    },
+    "precision": {
+      "Sky": 0.9994,
+      "Deciduous_trees": 0.8596,
+      "Coniferous_trees": 0.8993,
+      "Fallen_trees": 0.8438,
+      "Dirt_ground": 0.9504,
+      "Ground_vegetation": 0.9496,
+      "Rocks": 0.9471,
+      "Building": 0.9611,
+      "Fence": 0.8203,
+      "Car": 0.9413
+    }
+  },
+  "best_val_miou": 0.8424,
+  "best_epoch": 45
+}

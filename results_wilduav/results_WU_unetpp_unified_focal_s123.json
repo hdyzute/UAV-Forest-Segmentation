@@ -1,0 +1,46 @@
+{
+  "run_name": "WU_unetpp_unified_focal_s123",
+  "dataset": "wilduav",
+  "model": "unetpp",
+  "loss": "unified_focal",
+  "seed": 123,
+  "source": "parsed from wu4-wilduav-unified-focal-s123.ipynb",
+  "epochs": 50,
+  "evaluated": "final model on val.txt",
+  "test": {
+    "miou": 0.9018,
+    "iou": {
+      "Ground_vegetation": 0.9586,
+      "Trees": 0.918,
+      "Dirt_ground": 0.8794,
+      "Road": 0.96,
+      "Water": 0.9635,
+      "Empty": 0.8268,
+      "Static_car": 0.9468,
+      "Moving_car": 0.877,
+      "People": 0.7856
+    },
+    "recall": {
+      "Ground_vegetation": 0.9837,
+      "Trees": 0.9457,
+      "Dirt_ground": 0.941,
+      "Road": 0.9785,
+      "Water": 0.984,
+      "Empty": 0.8748,
+      "Static_car": 0.9747,
+      "Moving_car": 0.9377,
+      "People": 0.9204
+    },
+    "precision": {
+      "Ground_vegetation": 0.9741,
+      "Trees": 0.9692,
+      "Dirt_ground": 0.9307,
+      "Road": 0.9806,
+      "Water": 0.9789,
+      "Empty": 0.9378,
+      "Static_car": 0.9707,
+      "Moving_car": 0.9313,
+      "People": 0.8429
+    }
+  }
+}

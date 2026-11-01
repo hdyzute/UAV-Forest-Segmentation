@@ -1,0 +1,51 @@
+{
+  "run_name": "R09_unetpp_lovasz_s123",
+  "model": "unetpp",
+  "encoder": "resnet50",
+  "loss": "lovasz",
+  "seed": 123,
+  "use_amp": true,
+  "weight_decay": 0.0001,
+  "source": "parsed from notebook output",
+  "test": {
+    "miou": 0.8497,
+    "iou": {
+      "Sky": 0.9988,
+      "Deciduous_trees": 0.7581,
+      "Coniferous_trees": 0.8363,
+      "Fallen_trees": 0.6951,
+      "Dirt_ground": 0.88,
+      "Ground_vegetation": 0.874,
+      "Rocks": 0.8782,
+      "Building": 0.9356,
+      "Fence": 0.7431,
+      "Car": 0.8975
+    },
+    "recall": {
+      "Sky": 0.9995,
+      "Deciduous_trees": 0.8921,
+      "Coniferous_trees": 0.9253,
+      "Fallen_trees": 0.8463,
+      "Dirt_ground": 0.9408,
+      "Ground_vegetation": 0.9081,
+      "Rocks": 0.9496,
+      "Building": 0.9737,
+      "Fence": 0.8788,
+      "Car": 0.9435
+    },
+    "precision": {
+      "Sky": 0.9992,
+      "Deciduous_trees": 0.8346,
+      "Coniferous_trees": 0.8968,
+      "Fallen_trees": 0.7955,
+      "Dirt_ground": 0.9316,
+      "Ground_vegetation": 0.9588,
+      "Rocks": 0.9211,
+      "Building": 0.9599,
+      "Fence": 0.828,
+      "Car": 0.9484
+    }
+  },
+  "best_val_miou": 0.8369,
+  "best_epoch": 50
+}

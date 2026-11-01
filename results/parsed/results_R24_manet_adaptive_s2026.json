@@ -1,0 +1,51 @@
+{
+  "run_name": "R24_manet_adaptive_s2026",
+  "model": "manet",
+  "encoder": "resnet50",
+  "loss": "adaptive",
+  "seed": 2026,
+  "use_amp": false,
+  "weight_decay": 0.0001,
+  "source": "parsed from notebook output",
+  "test": {
+    "miou": 0.8267,
+    "iou": {
+      "Sky": 0.9967,
+      "Deciduous_trees": 0.7393,
+      "Coniferous_trees": 0.8257,
+      "Fallen_trees": 0.6514,
+      "Dirt_ground": 0.8927,
+      "Ground_vegetation": 0.8657,
+      "Rocks": 0.8498,
+      "Building": 0.9141,
+      "Fence": 0.681,
+      "Car": 0.8512
+    },
+    "recall": {
+      "Sky": 0.9984,
+      "Deciduous_trees": 0.8767,
+      "Coniferous_trees": 0.9156,
+      "Fallen_trees": 0.8419,
+      "Dirt_ground": 0.9679,
+      "Ground_vegetation": 0.9051,
+      "Rocks": 0.938,
+      "Building": 0.9689,
+      "Fence": 0.8613,
+      "Car": 0.9327
+    },
+    "precision": {
+      "Sky": 0.9983,
+      "Deciduous_trees": 0.8251,
+      "Coniferous_trees": 0.8937,
+      "Fallen_trees": 0.7421,
+      "Dirt_ground": 0.92,
+      "Ground_vegetation": 0.9521,
+      "Rocks": 0.9004,
+      "Building": 0.9417,
+      "Fence": 0.7649,
+      "Car": 0.9069
+    }
+  },
+  "best_val_miou": 0.8153,
+  "best_epoch": 49
+}
