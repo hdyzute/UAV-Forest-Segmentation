@@ -1,5 +1,7 @@
 # Revisiting Compound Losses for Class-Imbalanced UAV Forest Segmentation
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23872685.svg)](https://doi.org/10.5281/zenodo.23872685)
+
 Code, run notebooks, and results for the manuscript
 *Revisiting Compound Losses for Class-Imbalanced UAV Forest Segmentation: A Multi-Backbone Study of Dice, Focal, and Learned Weighting*
 (H.-D. Pham, H.-H. Pham Le, T.-S. Huynh; submitted to *Image and Vision Computing*).

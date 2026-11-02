@@ -3,6 +3,8 @@ message: "If you use this code, please cite it as below."
 title: "Revisiting Compound Losses for Class-Imbalanced UAV Forest Segmentation: code and results"
 type: software
 version: 1.0.0
+doi: 10.5281/zenodo.23872685
+date-released: 2026-11-02
 license: MIT
 repository-code: "https://github.com/hdyzute/UAV-Forest-Segmentation"
 authors:
