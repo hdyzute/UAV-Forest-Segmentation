@@ -17,7 +17,8 @@ and studies the operating point of the trained models with a post-hoc logit bias
 | `tools/build_week4_notebooks.py` | Template of the WildUAV runs and of the operating-point study (`week4/`). |
 | `tools/build_qualitative_notebook.py` | Regenerates `figures/make_qualitative.ipynb` (qualitative figure). |
 | `tools/smoke_test_losses.py`, `tools/smoke_test_pipeline.py` | CPU tests of the losses and of train → resume → test. |
-| `tools/make_tables_figures.py` | Tables and figures of the paper from `results/`. |
+| `tools/make_tables_figures.py` | Tables and Figs. 3-5 of the paper from `results/` (PNG and vector PDF; the paper uses `--seeds 123`). |
+| `tools/make_class_dist_figure.py` | Class-frequency figure (Fig. 1). |
 | `tools/make_op_figure.py` | Precision–recall figure of the operating-point study from `results_operating_point/`. |
 | `tools/parse_*.py`, `tools/csv_to_results.py` | Rebuild `results_<RUN>.json` from notebook outputs or logs. |
 | `week1/` … `week5/` | Run notebooks R01–R25 (Forest Inspection), WU1–WU6 (WildUAV), OP1 (operating point). They differ only in the CONFIG cell. |

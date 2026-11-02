@@ -167,6 +167,11 @@ def table_small_objects(by):
 
 
 # ------------------------------------------------------------------ figures
+def save(fig, stem):
+    """PNG for previews, vector PDF for the journal (IVC asks for vector line art)."""
+    fig.savefig(stem.with_suffix('.png')); fig.savefig(stem.with_suffix('.pdf'))
+
+
 def fig_loss_weights(log_csv, out):
     rows = list(csv.DictReader(open(log_csv)))
     ep = [int(r['epoch']) for r in rows]
@@ -179,7 +184,7 @@ def fig_loss_weights(log_csv, out):
                     va='center', color=INK, fontsize=8)
     ax.set_xlabel('Epoch'); ax.set_ylabel(r'Effective weight $w_k = \frac{1}{2}e^{-s_k}$')
     ax.set_xlim(1, ep[-1] + 9); ax.set_ylim(0, None)
-    fig.savefig(out / 'fig_loss_weights_convergence.png'); plt.close(fig)
+    save(fig, out / 'fig_loss_weights_convergence'); plt.close(fig)
 
 
 def fig_ablation(by, out):
@@ -200,7 +205,7 @@ def fig_ablation(by, out):
     ax.set_yticklabels([BB_LABEL[b] for b in reversed(BACKBONES)])
     ax.set_xlabel('Test mIoU (%)'); ax.grid(axis='y', visible=False)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=2, fontsize=8)
-    fig.savefig(out / 'fig_ablation_dotplot.png'); plt.close(fig)
+    save(fig, out / 'fig_ablation_dotplot'); plt.close(fig)
 
 
 def fig_small_objects(by, out, model='unetpp'):
@@ -220,7 +225,7 @@ def fig_small_objects(by, out, model='unetpp'):
         ax.set_ylabel(ylab); ax.set_title(title, fontsize=9, color=INK, loc='left'); ax.grid(axis='x', visible=False)
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc='upper center', ncol=2, fontsize=8, bbox_to_anchor=(0.5, 1.06))
-    fig.tight_layout(); fig.savefig(out / 'fig_small_object_tradeoff.png'); plt.close(fig)
+    fig.tight_layout(); save(fig, out / 'fig_small_object_tradeoff'); plt.close(fig)
 
 
 def main():

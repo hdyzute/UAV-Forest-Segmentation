@@ -61,5 +61,6 @@ handles, labels = axes[0].get_legend_handles_labels()
 fig.legend(handles, labels, loc='upper center', ncol=4, fontsize=8, bbox_to_anchor=(0.5, 1.07))
 fig.tight_layout(w_pad=0.8)
 out = Path(args.out); out.mkdir(exist_ok=True)
-fig.savefig(out / 'fig_operating_point.png', dpi=500, bbox_inches='tight', facecolor='white')
+for ext in ('png', 'pdf'):
+    fig.savefig(out / f'fig_operating_point.{ext}', dpi=500, bbox_inches='tight', facecolor='white')
 print('wrote', out / 'fig_operating_point.png')
